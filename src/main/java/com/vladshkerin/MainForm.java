@@ -13,10 +13,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,8 +33,8 @@ public class MainForm extends JFrame {
     private static final int MAXIMIM_WIDTH_WINDOW = 500;
     private static final int MAXIMIM_HEIGHT_WINDOW = 350;
 
+    private final JTextArea textArea = new JTextArea();
     private JProgressBar progressBar = new JProgressBar();
-    private JTextArea textArea = new JTextArea();
     private JButton runButton = new JButton();
     private JButton updateButton = new JButton();
     private JButton exitButton = new JButton();
@@ -66,17 +66,14 @@ public class MainForm extends JFrame {
 
     public class TaskPool implements Runnable {
 
-        private Operations[] arrayOperations;
+        private Operations[] poolOperations;
 
-        public TaskPool() {
-            arrayOperations = new Operations[]{
-                    Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
-                    Operations.UPGRADE, Operations.TEST, Operations.UPDATE
-            };
+        public TaskPool(Operations[] pool) {
+            this.poolOperations = pool;
         }
 
         public TaskPool(Operations operation) {
-            this.arrayOperations = new Operations[]{operation};
+            this.poolOperations = new Operations[]{operation};
         }
 
         @Override
@@ -95,7 +92,7 @@ public class MainForm extends JFrame {
                 @Override
                 public void run() {
                     progressBar.setMinimum(0);
-                    progressBar.setMaximum(arrayOperations.length);
+                    progressBar.setMaximum(poolOperations.length);
 
                     runButton.setEnabled(false);
                     updateButton.setEnabled(false);
@@ -103,7 +100,7 @@ public class MainForm extends JFrame {
             });
 
             int progress = 0;
-            for (Operations operation : arrayOperations) {
+            for (Operations operation : poolOperations) {
                 try {
                     synchronized (textArea) {
                         TaskWorker taskWorker = new TaskWorker(operation, ++progress);
@@ -200,17 +197,43 @@ public class MainForm extends JFrame {
     }
 
     protected class ButtonListener implements ActionListener {
-
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equals("runButton")) {
                 Thread thread = new Thread(new TaskPool(Operations.RUN));
                 thread.start();
             } else if (e.getActionCommand().equals("updateButton")) {
-                Thread thread = new Thread(new TaskPool());
+                Thread thread = new Thread(new TaskPool(createPool()));
                 thread.start();
             }
         }
+    }
+
+    private Operations[] createPool() {
+        Operations[] arrayOperations = new Operations[]{};
+        try {
+            String strLastDate = Settings.getString("last.date.unload_db");
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern("dd.MM.yyyy");
+            Date lastDate = format.parse(strLastDate);
+
+            Date currentDate = Calendar.getInstance().getTime();
+            if (lastDate.after(currentDate)) {
+                arrayOperations = new Operations[]{
+                        Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
+                        Operations.UPGRADE, Operations.TEST, Operations.UPDATE
+                };
+            } else {
+                arrayOperations = new Operations[]{
+                        Operations.KILL, Operations.UPDATE,
+                        Operations.UPGRADE, Operations.UPDATE
+                };
+            }
+        } catch (NotFoundPropertyException | ParseException e) {
+            log.log(Level.WARNING, e.getMessage());
+        }
+
+        return arrayOperations;
     }
 
     protected class UpdateAction extends AbstractAction {

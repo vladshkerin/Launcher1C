@@ -33,6 +33,9 @@ public class Command {
     public static void checkDefaultPath() throws NotFoundPathException {
         if (!(new File(path1c).exists())) {
             String[] mas = new String[]{
+                    "C:\\Program Files\\1cv82\\8.2.19.130\\bin\\1cv8.exe",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.19.130\\bin\\1cv8.exe",
+                    "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\1cv8.exe",
                     "C:\\Program Files (x86)\\1cv82\\8.2.19.90\\bin\\1cv8.exe",
                     "C:\\Program Files\\1cv82\\8.2.19.83\\bin\\1cv8.exe",
                     "C:\\Program Files (x86)\\1cv82\\8.2.19.83\\bin\\1cv8.exe",
