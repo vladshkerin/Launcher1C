@@ -177,6 +177,9 @@ public class UpdateProgram {
         String oldVersion = Resource.getString("Application.version");
         if (!(newVersion.isEmpty() || oldVersion.isEmpty())) {
 
+            if (oldVersion.contains("test-")) {
+                oldVersion = oldVersion.replaceFirst("test-", "");
+            }
             Integer newVer = Integer.valueOf(newVersion.replace(".", ""));
             Integer oldVer = Integer.valueOf(oldVersion.replace(".", ""));
             return newVer > oldVer;
