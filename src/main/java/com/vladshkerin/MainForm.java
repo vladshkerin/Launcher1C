@@ -337,7 +337,7 @@ public class MainForm extends JFrame {
     }
 
     private Operations[] createPool() {
-        Operations[] arrayOperations = new Operations[]{};
+        Operations[] arrayOperations;
         Calendar currentDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
         Calendar lastDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
         try {
@@ -435,6 +435,8 @@ public class MainForm extends JFrame {
                     mapSettings.put("height.size.window", String.valueOf((int) getSize().getHeight()));
                     mapSettings.put("width.position.window", String.valueOf(getX()));
                     mapSettings.put("height.position.window", String.valueOf(getY()));
+                    mapSettings.put("last.date.unload_db",
+                            new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
                     Settings.setProperties(mapSettings);
                     try {
                         Settings.storeProperties();
