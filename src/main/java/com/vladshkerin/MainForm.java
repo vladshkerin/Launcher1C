@@ -108,6 +108,11 @@ public class MainForm extends JFrame {
 
                         textArea.wait();
                     }
+
+                    if (Operations.UNLOAD_DB.equals(operation)) {
+                        Settings.setProperty("last.date.unload_db",
+                                new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
+                    }
                 } catch (InterruptedException e) {
                     log.log(Level.SEVERE, "Error wait TaskWorker", e);
                 }
@@ -345,13 +350,12 @@ public class MainForm extends JFrame {
             SimpleDateFormat format = new SimpleDateFormat();
             format.applyPattern("dd.MM.yyyy");
             lastDate.setTime(format.parse(strLastDate));
-
+            lastDate.add(Calendar.DAY_OF_YEAR, 7);
         } catch (NotFoundPropertyException | ParseException e) {
             log.log(Level.WARNING, e.getMessage());
         }
 
-        lastDate.add(Calendar.DAY_OF_YEAR, 7);
-        if (lastDate.before(currentDate)) {
+        if (lastDate.compareTo(currentDate) <= 0) {
             arrayOperations = new Operations[]{
                     Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
                     Operations.UPGRADE, Operations.TEST, Operations.UPDATE
@@ -435,8 +439,6 @@ public class MainForm extends JFrame {
                     mapSettings.put("height.size.window", String.valueOf((int) getSize().getHeight()));
                     mapSettings.put("width.position.window", String.valueOf(getX()));
                     mapSettings.put("height.position.window", String.valueOf(getY()));
-                    mapSettings.put("last.date.unload_db",
-                            new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
                     Settings.setProperties(mapSettings);
                     try {
                         Settings.storeProperties();
