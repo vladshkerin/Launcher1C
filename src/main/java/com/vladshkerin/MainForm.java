@@ -232,36 +232,6 @@ public class MainForm extends JFrame {
         }
     }
 
-    private Operations[] createPool() {
-        Operations[] arrayOperations = new Operations[]{};
-        Calendar currentDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
-        Calendar lastDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
-        try {
-            String strLastDate = Settings.getString("last.date.unload_db");
-            SimpleDateFormat format = new SimpleDateFormat();
-            format.applyPattern("dd.MM.yyyy");
-            lastDate.setTime(format.parse(strLastDate));
-
-        } catch (NotFoundPropertyException | ParseException e) {
-            log.log(Level.WARNING, e.getMessage());
-        }
-
-        lastDate.add(Calendar.DAY_OF_YEAR, 7);
-        if (lastDate.before(currentDate)) {
-            arrayOperations = new Operations[]{
-                    Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
-                    Operations.UPGRADE, Operations.TEST, Operations.UPDATE
-            };
-        } else {
-            arrayOperations = new Operations[]{
-                    Operations.KILL, Operations.UPDATE,
-                    Operations.UPGRADE, Operations.UPDATE
-            };
-        }
-
-        return arrayOperations;
-    }
-
     private JPanel createGUI() {
 
         progressBar.setOrientation(SwingConstants.HORIZONTAL);
@@ -366,6 +336,36 @@ public class MainForm extends JFrame {
         return file;
     }
 
+    private Operations[] createPool() {
+        Operations[] arrayOperations = new Operations[]{};
+        Calendar currentDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+        Calendar lastDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+        try {
+            String strLastDate = Settings.getString("last.date.unload_db");
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern("dd.MM.yyyy");
+            lastDate.setTime(format.parse(strLastDate));
+
+        } catch (NotFoundPropertyException | ParseException e) {
+            log.log(Level.WARNING, e.getMessage());
+        }
+
+        lastDate.add(Calendar.DAY_OF_YEAR, 7);
+        if (lastDate.before(currentDate)) {
+            arrayOperations = new Operations[]{
+                    Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
+                    Operations.UPGRADE, Operations.TEST, Operations.UPDATE
+            };
+        } else {
+            arrayOperations = new Operations[]{
+                    Operations.KILL, Operations.UPDATE,
+                    Operations.UPGRADE, Operations.UPDATE
+            };
+        }
+
+        return arrayOperations;
+    }
+
     private void setSizeWindow() {
 
         int defWidthWindow = (int) getSize().getWidth();
@@ -374,8 +374,8 @@ public class MainForm extends JFrame {
         int widthWindow;
         int heightWindow;
         try {
-            widthWindow = Integer.parseInt(Settings.getString("widthSizeWindow"));
-            heightWindow = Integer.parseInt(Settings.getString("heightSizeWindow"));
+            widthWindow = Integer.parseInt(Settings.getString("width.size.window"));
+            heightWindow = Integer.parseInt(Settings.getString("height.size.window"));
 
 //            if (widthWindow > MAXIMIM_WIDTH_WINDOW || heightWindow > MAXIMIM_HEIGHT_WINDOW
 //                    || widthWindow < MINIMUM_WIDTH_WINDOW || heightWindow < MINIMUM_HEIGHT_WINDOW) {
@@ -404,8 +404,8 @@ public class MainForm extends JFrame {
         int positionX;
         int positionY;
         try {
-            positionX = Integer.parseInt(Settings.getString("widthPositionWindow"));
-            positionY = Integer.parseInt(Settings.getString("heightPositionWindow"));
+            positionX = Integer.parseInt(Settings.getString("width.position.window"));
+            positionY = Integer.parseInt(Settings.getString("height.position.window"));
 
             if (positionX > dimension.getWidth() || positionY > dimension.getHeight()) {
                 throw new NotFoundPropertyException("Loaded position of the window exceeds screen size");
@@ -431,10 +431,10 @@ public class MainForm extends JFrame {
                 @Override
                 public void run() {
                     Map<String, String> mapSettings = new LinkedHashMap<>();
-                    mapSettings.put("widthSizeWindow", String.valueOf((int) getSize().getWidth()));
-                    mapSettings.put("heightSizeWindow", String.valueOf((int) getSize().getHeight()));
-                    mapSettings.put("widthPositionWindow", String.valueOf(getX()));
-                    mapSettings.put("heightPositionWindow", String.valueOf(getY()));
+                    mapSettings.put("width.size.window", String.valueOf((int) getSize().getWidth()));
+                    mapSettings.put("height.size.window", String.valueOf((int) getSize().getHeight()));
+                    mapSettings.put("width.position.window", String.valueOf(getX()));
+                    mapSettings.put("height.position.window", String.valueOf(getY()));
                     Settings.setProperties(mapSettings);
                     try {
                         Settings.storeProperties();
