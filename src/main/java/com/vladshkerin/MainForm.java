@@ -189,7 +189,6 @@ public class MainForm extends JFrame {
     }
 
     protected class WindowListener extends WindowAdapter {
-
         @Override
         public void windowClosing(WindowEvent event) {
             runDialogExit();
@@ -207,33 +206,6 @@ public class MainForm extends JFrame {
                 thread.start();
             }
         }
-    }
-
-    private Operations[] createPool() {
-        Operations[] arrayOperations = new Operations[]{};
-        try {
-            String strLastDate = Settings.getString("last.date.unload_db");
-            SimpleDateFormat format = new SimpleDateFormat();
-            format.applyPattern("dd.MM.yyyy");
-            Date lastDate = format.parse(strLastDate);
-
-            Date currentDate = Calendar.getInstance().getTime();
-            if (lastDate.after(currentDate)) {
-                arrayOperations = new Operations[]{
-                        Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
-                        Operations.UPGRADE, Operations.TEST, Operations.UPDATE
-                };
-            } else {
-                arrayOperations = new Operations[]{
-                        Operations.KILL, Operations.UPDATE,
-                        Operations.UPGRADE, Operations.UPDATE
-                };
-            }
-        } catch (NotFoundPropertyException | ParseException e) {
-            log.log(Level.WARNING, e.getMessage());
-        }
-
-        return arrayOperations;
     }
 
     protected class UpdateAction extends AbstractAction {
@@ -258,6 +230,36 @@ public class MainForm extends JFrame {
         public void actionPerformed(ActionEvent e) {
             runDialogExit();
         }
+    }
+
+    private Operations[] createPool() {
+        Operations[] arrayOperations = new Operations[]{};
+        Calendar currentDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+        Calendar lastDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+        try {
+            String strLastDate = Settings.getString("last.date.unload_db");
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern("dd.MM.yyyy");
+            lastDate.setTime(format.parse(strLastDate));
+
+        } catch (NotFoundPropertyException | ParseException e) {
+            log.log(Level.WARNING, e.getMessage());
+        }
+
+        lastDate.add(Calendar.DAY_OF_YEAR, 7);
+        if (lastDate.before(currentDate)) {
+            arrayOperations = new Operations[]{
+                    Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
+                    Operations.UPGRADE, Operations.TEST, Operations.UPDATE
+            };
+        } else {
+            arrayOperations = new Operations[]{
+                    Operations.KILL, Operations.UPDATE,
+                    Operations.UPGRADE, Operations.UPDATE
+            };
+        }
+
+        return arrayOperations;
     }
 
     private JPanel createGUI() {
