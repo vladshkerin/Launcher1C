@@ -31,7 +31,7 @@ public class UpdateForm extends JDialog {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Error set look and feel in update form", e);
+            log.log(Level.WARNING, "Error set look and feel in update form.");
         }
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());

@@ -47,7 +47,7 @@ public class MainForm extends JFrame {
             URL imageResource = Launcher1C.class.getResource("/images/ariant.png");
             setIconImage(ImageIO.read(imageResource));
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Error set look and feel in main form");
+            log.log(Level.WARNING, "Error set look and feel in main form");
         }
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -114,7 +114,7 @@ public class MainForm extends JFrame {
                                 new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
                     }
                 } catch (InterruptedException e) {
-                    log.log(Level.SEVERE, "Error wait TaskWorker", e);
+                    log.log(Level.SEVERE, "Error wait TaskWorker: ", e.getMessage());
                 }
             }
 
@@ -343,19 +343,20 @@ public class MainForm extends JFrame {
 
     private Operations[] createPool() {
         Operations[] arrayOperations;
-        Calendar currentDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
-        Calendar lastDate = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+        Calendar currentCalendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+        Calendar lastCalendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
         try {
             String strLastDate = Settings.getString("last.date.unload_db");
             SimpleDateFormat format = new SimpleDateFormat();
             format.applyPattern("dd.MM.yyyy");
-            lastDate.setTime(format.parse(strLastDate));
-            lastDate.add(Calendar.DAY_OF_YEAR, 7);
+            lastCalendar.setTime(format.parse(strLastDate));
+            lastCalendar.add(Calendar.DAY_OF_YEAR, 7);
         } catch (NotFoundPropertyException | ParseException e) {
+            lastCalendar = currentCalendar;
             log.log(Level.WARNING, e.getMessage());
         }
 
-        if (lastDate.compareTo(currentDate) <= 0) {
+        if (lastCalendar.compareTo(currentCalendar) <= 0) {
             arrayOperations = new Operations[]{
                     Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
                     Operations.UPGRADE, Operations.TEST, Operations.UPDATE
@@ -443,7 +444,7 @@ public class MainForm extends JFrame {
                     try {
                         Settings.storeProperties();
                     } catch (NotFoundPropertyException e) {
-                        log.log(Level.WARNING, e.getMessage(), e);
+                        log.log(Level.WARNING, e.getMessage());
                     }
                     System.exit(0);
                 }
@@ -486,7 +487,7 @@ public class MainForm extends JFrame {
                         }
                     }
                 } catch (FTPException e) {
-                    log.log(Level.SEVERE, e.getMessage(), e);
+                    log.log(Level.SEVERE, e.getMessage());
                 }
             }
         });
