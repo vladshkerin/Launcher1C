@@ -443,7 +443,7 @@ public class MainForm extends JFrame {
                     Settings.setProperties(mapSettings);
                     try {
                         Settings.storeProperties();
-                    } catch (NotFoundPropertyException e) {
+                    } catch (IOException e) {
                         log.log(Level.WARNING, e.getMessage());
                     }
                     System.exit(0);

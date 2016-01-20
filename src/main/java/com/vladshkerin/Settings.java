@@ -6,36 +6,42 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class is used to get or set properties program.
+ * This class is used to get or set settings program.
  */
 public class Settings {
 
     private static final String FILE_NAME_SETTINGS = "settings.ini";
 
     private static Logger log = Logger.getLogger(UpdateProgram.class.getName());
-
-    private static Properties properties;
     private static String currentPath;
+    private static Properties properties;
 
     static {
         currentPath = new File("").getAbsolutePath();
         File file = new File(currentPath + File.separator + FILE_NAME_SETTINGS);
-        try {
-            properties = getProperties(file);
-        } catch (NotFoundPropertyException e) {
-            properties = new java.util.Properties();
-            log.log(Level.WARNING, "Not found file settings: " + file.getAbsolutePath());
-        }
+        properties = getNewProperties(file);
     }
 
     private Settings() {
         //TODO empty
+    }
+
+    public static void setProperties(Map<String, String> map) {
+        if (map.isEmpty()) return;
+        properties.putAll(map);
+    }
+
+    public static void storeProperties() throws IOException {
+        File file = new File(currentPath + File.separator + FILE_NAME_SETTINGS);
+        properties.store(new FileWriter(file), FILE_NAME_SETTINGS);
     }
 
     public static String getString(String key) throws NotFoundPropertyException {
@@ -45,39 +51,39 @@ public class Settings {
         return properties.getProperty(key);
     }
 
-    private static Properties getProperties(File file) throws NotFoundPropertyException {
-        Properties properties = new java.util.Properties();
-        if (file.exists()) {
-            try {
-                properties.load(new FileReader(file));
-            } catch (IOException e) {
-                throw new NotFoundPropertyException(e.getMessage());
-            }
-        } else {
-            throw new NotFoundPropertyException(
-                    "Not found file property: " + file.getAbsolutePath());
-        }
-        return properties;
-    }
-
-    public static void setProperties(Map<String, String> map) {
-        if (map.isEmpty())
-            return;
-
-        properties.putAll(map);
-    }
-
     public static void setProperty(String key, String value) {
         properties.setProperty(key, value);
     }
 
-    public static void storeProperties() throws NotFoundPropertyException {
-        File file = new File(currentPath + File.separator + FILE_NAME_SETTINGS);
+    private static Properties getNewProperties(File file) {
+        Properties newProperties = new java.util.Properties();
         try {
-            properties.store(new FileWriter(file), FILE_NAME_SETTINGS);
+            if (file.exists()) {
+                newProperties.load(new FileReader(file));
+            } else {
+                if (file.createNewFile()) {
+                    fillFileProperties(newProperties);
+                    newProperties.store(new FileWriter(file), FILE_NAME_SETTINGS);
+                } else {
+                    throw new IOException();
+                }
+            }
         } catch (IOException e) {
-            throw new NotFoundPropertyException(
-                    "Error store properties in file" + file.getAbsolutePath());
+            newProperties = new java.util.Properties();
+            log.log(Level.SEVERE, "Not found file settings: " + file.getAbsolutePath());
         }
+
+        return newProperties;
+    }
+
+    private static void fillFileProperties(Properties properties) {
+        Map<String, String> mapSettings = new LinkedHashMap<>();
+        mapSettings.put("width.size.window", "0");
+        mapSettings.put("height.size.window", "0");
+        mapSettings.put("width.position.window", "0");
+        mapSettings.put("height.position.window", "0");
+        mapSettings.put("last.date.unload_db",
+                new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
+        properties.putAll(mapSettings);
     }
 }
