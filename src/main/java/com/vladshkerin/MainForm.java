@@ -458,37 +458,44 @@ public class MainForm extends JFrame {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    UpdateProgram updateProgram = new UpdateProgram();
-                    if (updateProgram.isUpdate()) {
+        try {
+            UpdateProgram updateProgram = new UpdateProgram();
+            if (updateProgram.isUpdate()) {
 
-                        String msg = Resource.getString("strNewVersionUpdate")
-                                + " \"" + Resource.getString("MainForm") + "\":"
-                                + "\n  " + Resource.getString("strCurrentVersion")
-                                + " v." + Resource.getString("Application.version")
-                                + "\n  " + Resource.getString("strNewVersion")
-                                + " v." + updateProgram.getNewVersion()
-                                + "\n" + Resource.getString("strToUpgrade") + "?";
-                        int res = JOptionPane.showConfirmDialog(null,
-                                msg,
-                                Resource.getString("QuestionForm"),
-                                JOptionPane.YES_NO_OPTION);
-                        if (res == JOptionPane.YES_OPTION) {
+                StringBuilder sbMsg = new StringBuilder();
+                sbMsg.append(Resource.getString("strNewVersionUpdate")
+                        + " \"" + Resource.getString("MainForm") + "\".\n\n");
+                sbMsg.append(String.format("%-17s%s\n",
+                        Resource.getString("strCurrentVersion") + ":",
+                        "v" + Resource.getString("Application.version")));
+                sbMsg.append(String.format("%-19s%s\n",
+                        Resource.getString("strNewVersion") + ":",
+                        "v" + updateProgram.getNewVersion()));
+                sbMsg.append(String.format("%-18s%.3f MB\n\n",
+                        Resource.getString("strSizeFile") + ":",
+                        updateProgram.getSizeFile() / 1024.0 / 1024.0));
+                sbMsg.append(Resource.getString("strToUpgrade") + "?");
 
-                            if (updateProgram.update()) {
-                                String text = Resource.getString("strCompleteUpdate") + "."
-                                        + "\n" + Resource.getString("strRestartProgram") + ".";
-                                JOptionPane.showMessageDialog(null,
-                                        text,
-                                        Resource.getString("InformationForm"),
-                                        JOptionPane.INFORMATION_MESSAGE);
-                                System.exit(0);
-                            }
-                        }
+                int res = JOptionPane.showConfirmDialog(null,
+                        sbMsg,
+                        Resource.getString("QuestionForm"),
+                        JOptionPane.YES_NO_OPTION);
+                if (res == JOptionPane.YES_OPTION) {
+
+                    if (updateProgram.update()) {
+                        String text = Resource.getString("strCompleteUpdate") + "."
+                                + "\n" + Resource.getString("strRestartProgram") + ".";
+                        JOptionPane.showMessageDialog(null,
+                                text,
+                                Resource.getString("InformationForm"),
+                                JOptionPane.INFORMATION_MESSAGE);
+                        System.exit(0);
                     }
-                } catch (FTPException e) {
-                    log.log(Level.SEVERE, e.getMessage());
                 }
+            }
+        } catch (FTPException e) {
+            log.log(Level.SEVERE, e.getMessage());
+        }
             }
         });
         t.setDaemon(true);

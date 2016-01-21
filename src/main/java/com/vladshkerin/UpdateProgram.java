@@ -7,6 +7,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.*;
+import java.nio.DoubleBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,6 +34,7 @@ public class UpdateProgram {
     private String nameFile = "Launcher1C";
     private String extensionFile = "zip";
     private String newVersion = "";
+    private Long sizeFile = 0L;
     private String server = "ftp.mag.ariant.ru";
     private String login = "obmen";
     private String password = "Nhfutlbz";
@@ -65,6 +67,10 @@ public class UpdateProgram {
         return newVersion;
     }
 
+    public Long getSizeFile() {
+        return sizeFile;
+    }
+
     public boolean isUpdate() throws FTPException {
         try {
             connectedFTP();
@@ -79,6 +85,7 @@ public class UpdateProgram {
                     newVersion = file.getName()
                             .replace(nameFile + "-", "")
                             .replace("." + extensionFile, "");
+                    sizeFile = file.getSize();
                     return newVersionAvailable();
                 }
             }
