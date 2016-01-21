@@ -470,20 +470,20 @@ public class MainForm extends JFrame {
                 StringBuilder sbMsg = new StringBuilder();
                 sbMsg.append(Resource.getString("strNewVersionUpdate")
                         + " \"" + Resource.getString("MainForm") + "\".\n\n");
-                sbMsg.append(String.format("%-17s%s\n",
+                sbMsg.append(String.format("%-24s%s\n",
                         Resource.getString("strCurrentVersion") + ":",
                         "v" + Resource.getString("Application.version")));
-                sbMsg.append(String.format("%-19s%s\n",
+                sbMsg.append(String.format("%-26s%s\n",
                         Resource.getString("strNewVersion") + ":",
                         "v" + updateProgram.getNewVersion()));
-                sbMsg.append(String.format("%-18s%.3f MB\n\n",
-                        Resource.getString("strSizeFile") + ":",
+                sbMsg.append(String.format(Resource.getCurrentLocale(), "%-21s%.3f MB\n\n",
+                        Resource.getString("strSizeUpdate") + ":",
                         updateProgram.getSizeFile() / 1024.0 / 1024.0));
                 sbMsg.append(Resource.getString("strToUpgrade") + "?");
 
                 int res = JOptionPane.showConfirmDialog(null,
                         sbMsg,
-                        Resource.getString("QuestionForm"),
+                        Resource.getString("UpdateForm"),
                         JOptionPane.YES_NO_OPTION);
                 if (res == JOptionPane.YES_OPTION) {
 
