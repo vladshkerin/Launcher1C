@@ -7,9 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,8 +80,12 @@ public class Settings {
         mapSettings.put("height.size.window", "0");
         mapSettings.put("width.position.window", "0");
         mapSettings.put("height.position.window", "0");
+
+        Calendar calendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
         mapSettings.put("last.date.unload_db",
-                new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
+                new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime()));
+
         properties.putAll(mapSettings);
     }
 }

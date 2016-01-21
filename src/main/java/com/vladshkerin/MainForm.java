@@ -110,8 +110,13 @@ public class MainForm extends JFrame {
                     }
 
                     if (Operations.UNLOAD_DB.equals(operation)) {
-                        Settings.setProperty("last.date.unload_db",
-                                new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
+                        try {
+                            Settings.setProperty("last.date.unload_db",
+                                    new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
+                            Settings.storeProperties();
+                        } catch (IOException e) {
+                            //TODO empty
+                        }
                     }
                 } catch (InterruptedException e) {
                     log.log(Level.SEVERE, "Error wait TaskWorker: ", e.getMessage());
