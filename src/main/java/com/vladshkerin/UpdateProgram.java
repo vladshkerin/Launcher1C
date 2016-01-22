@@ -1,17 +1,11 @@
 package com.vladshkerin;
 
 import com.vladshkerin.exception.FTPException;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPConnectionClosedException;
-import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.ftp.*;
 
 import java.io.*;
-import java.nio.DoubleBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -20,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 /**
  * Class to the update program
@@ -215,11 +208,11 @@ public class UpdateProgram {
         }
 
         if (binaryTransfer) {
-            FTP.setFileType(FTP.BINARY_FILE_TYPE);
+            FTP.setFileType(org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE);
         } else {
             // in theory this should not be necessary as servers should default to ASCII
             // but they don't all do so - see NET-500
-            FTP.setFileType(FTP.ASCII_FILE_TYPE);
+            FTP.setFileType(org.apache.commons.net.ftp.FTP.ASCII_FILE_TYPE);
         }
 
         // Use passive mode as default because most of us are behind firewalls these days.
