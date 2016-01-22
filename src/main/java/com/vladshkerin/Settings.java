@@ -76,8 +76,8 @@ public class Settings {
 
     private static void fillFileProperties(Properties properties) {
         Map<String, String> mapSettings = new LinkedHashMap<>();
-        mapSettings.put("width.size.window", "400");
-        mapSettings.put("height.size.window", "300");
+        mapSettings.put("width.size.window", "450");
+        mapSettings.put("height.size.window", "350");
         mapSettings.put("width.position.window", "30");
         mapSettings.put("height.position.window", "30");
 
