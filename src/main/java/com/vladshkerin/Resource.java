@@ -28,19 +28,19 @@ public class Resource {
         //TODO empty
     }
 
-    public static Locale getCurrentLocale() {
-        return currentLocale;
-    }
-
-    public static String getCurrentPath() {
-        return currentPath;
-    }
-
     public static String getString(String key) {
         if ("Application.version".equals(key)) {
             return resourceVer.getString(key);
         } else {
             return resourceStr.getString(key);
         }
+    }
+
+    public static Locale getCurrentLocale() {
+        return currentLocale;
+    }
+
+    public static String getCurrentPath() {
+        return currentPath;
     }
 }

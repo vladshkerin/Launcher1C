@@ -37,11 +37,6 @@ public class Settings {
         properties.putAll(map);
     }
 
-    public static void storeProperties() throws IOException {
-        File file = new File(currentPath + File.separator + FILE_NAME_SETTINGS);
-        properties.store(new FileWriter(file), FILE_NAME_SETTINGS);
-    }
-
     public static String getString(String key) throws NotFoundPropertyException {
         if (properties.getProperty(key) == null) {
             throw new NotFoundPropertyException("Not found property: " + key);
@@ -51,6 +46,11 @@ public class Settings {
 
     public static void setProperty(String key, String value) {
         properties.setProperty(key, value);
+    }
+
+    public static void storeProperties() throws IOException {
+        File file = new File(currentPath + File.separator + FILE_NAME_SETTINGS);
+        properties.store(new FileWriter(file), FILE_NAME_SETTINGS);
     }
 
     private static Properties getNewProperties(File file) {

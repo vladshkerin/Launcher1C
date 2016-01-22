@@ -22,7 +22,7 @@ public class Command {
         pathBackup = "C:\\backup";
         backBase = "base1c_" +
                 new SimpleDateFormat("MM_yyyy").format(System.currentTimeMillis());
-        lang = "En";
+        lang = Resource.getCurrentLocale().getLanguage();
     }
 
     /**
@@ -84,12 +84,14 @@ public class Command {
         switch (operation) {
             case ENTERPRISE:
                 cmd = new String[]{
-                        path1c, "ENTERPRISE", "/F" + pathBase, "/N" + "Ревизор", "/LRu  ", "/DisableStartupMessages"
+                        path1c, "ENTERPRISE", "/F" + pathBase, "/N" + "Ревизор", "/L" + lang,
+                        "/DisableStartupMessages"
                 };
                 break;
             case CONFIG:
                 cmd = new String[]{
-                        path1c, "CONFIG", "/F" + pathBase, "/N" + "Ревизор", "/LRu  ", "/DisableStartupMessages"
+                        path1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/L" + lang,
+                        "/DisableStartupMessages"
                 };
                 break;
             case UNLOAD_DB:
