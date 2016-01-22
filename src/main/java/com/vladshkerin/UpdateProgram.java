@@ -1,7 +1,10 @@
 package com.vladshkerin;
 
 import com.vladshkerin.exception.FTPException;
-import org.apache.commons.net.ftp.*;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPConnectionClosedException;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -28,13 +31,9 @@ public class UpdateProgram {
     private String extensionFile = "zip";
     private String newVersion = "";
     private Long sizeFile = 0L;
-    private String server = "ftp.mag.ariant.ru";
-    private String login = "obmen";
-    private String password = "Nhfutlbz";
     private String downloadURL = "_UPDATE_PROGRAM_/Launcher1C";
+    private String server = "ftp.mag.ariant.ru";
     private int port = 21;
-    private boolean binaryTransfer = true;
-    private boolean localActive = false;
 
     public UpdateProgram() {
         FTP = new FTPClient();
@@ -202,6 +201,12 @@ public class UpdateProgram {
     }
 
     private void setSettingFTP() throws IOException, FTPException {
+        setSettingFTP(true, false);
+    }
+
+    private void setSettingFTP(boolean binaryTransfer, boolean localMode) throws IOException, FTPException {
+        String login = "obmen";
+        String password = "Nhfutlbz";
         if (!FTP.login(login, password)) {
             FTP.logout();
             throw new FTPException("FTP could not login to server.");
@@ -216,7 +221,7 @@ public class UpdateProgram {
         }
 
         // Use passive mode as default because most of us are behind firewalls these days.
-        if (localActive) {
+        if (localMode) {
             FTP.enterLocalActiveMode();
         } else {
             FTP.enterLocalPassiveMode();
