@@ -28,10 +28,10 @@ public class MainForm extends JFrame {
 
     private static Logger log = Logger.getLogger(UpdateProgram.class.getName());
 
-    private static final int MINIMUM_WIDTH_WINDOW = 340;
-    private static final int MINIMUM_HEIGHT_WINDOW = 180;
-    private static final int MAXIMIM_WIDTH_WINDOW = 500;
-    private static final int MAXIMIM_HEIGHT_WINDOW = 350;
+    private static final int MINIMUM_WIDTH_WINDOW = 400;
+    private static final int MINIMUM_HEIGHT_WINDOW = 250;
+    private static final int MAXIMIM_WIDTH_WINDOW = 600;
+    private static final int MAXIMIM_HEIGHT_WINDOW = 400;
 
     private final JTextArea textArea = new JTextArea();
     private JProgressBar progressBar = new JProgressBar();
@@ -52,16 +52,14 @@ public class MainForm extends JFrame {
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());
-//        setMinimumSize(new Dimension(MINIMUM_WIDTH_WINDOW, MINIMUM_HEIGHT_WINDOW));
+        setMinimumSize(new Dimension(MINIMUM_WIDTH_WINDOW, MINIMUM_HEIGHT_WINDOW));
         setMaximumSize(new Dimension(MAXIMIM_WIDTH_WINDOW, MAXIMIM_HEIGHT_WINDOW));
         setSizeWindow();
         setPositionWindow();
 
         add(createGUI());
 
-        pack();
-
-        runCheckUpdate();
+//        runCheckUpdate();
     }
 
     public class TaskPool implements Runnable {
@@ -244,11 +242,6 @@ public class MainForm extends JFrame {
 
     private JPanel createGUI() {
 
-        progressBar.setOrientation(SwingConstants.HORIZONTAL);
-
-        scrollPane.add(textArea);
-        scrollPane.add(scrollBar);
-
         WindowListener windowListener = new WindowListener();
         addWindowListener(windowListener);
 
@@ -257,79 +250,53 @@ public class MainForm extends JFrame {
         updateButton.addActionListener(buttonListener);
         exitButton.addActionListener(new ExitAction());
 
-        runButton.setText(Resource.getString("RunButton"));
-        updateButton.setText(Resource.getString("UpdateButton"));
-        exitButton.setText(Resource.getString("ExitButton"));
-
         runButton.setActionCommand("runButton");
         updateButton.setActionCommand("updateButton");
         exitButton.setActionCommand("exitButton");
 
-        runButton.setMnemonic('з');
-        updateButton.setMnemonic('о');
-        exitButton.setMnemonic('в');
+        runButton.setText(Resource.getString("RunButton"));
+        updateButton.setText(Resource.getString("UpdateButton"));
+        exitButton.setText(Resource.getString("ExitButton"));
 
-        runButton.setToolTipText("Запуск программы 1С");
-        updateButton.setToolTipText("Запуск обновления базы/конфигурации 1С");
-        textArea.setToolTipText("<html><b><ul>Описание потоков:</b>" +
-                "<li>KILL - завершает все процессы 1С (без сохранения данных!)" +
-                "<li>UNLOAD_DB - выгружает базу 1С" +
-                "<li>UPDATE - обновляет данные" +
-                "<li>UPGRADE - обновляет конфигурацию" +
-                "<li>TEST - тестирует и восстанавливает базу");
+        runButton.setToolTipText(Resource.getString("strToolTipRunButton"));
+        updateButton.setToolTipText(Resource.getString("strToolTipUpdateButton"));
+        textArea.setToolTipText(Resource.getString("strToolTipTextArea"));
+        ToolTipManager ttm = ToolTipManager.sharedInstance();
+        ttm.setDismissDelay(10000);
 
-//        JMenuBar menuBar = new JMenuBar();
-//        menuBar.add(createFileMenu());
+        progressBar.setOrientation(SwingConstants.HORIZONTAL);
 
-        // Version 1
-        JPanel main = BoxLayoutUtils.createVerticalPanel();
-        main.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        scrollPane.add(textArea);
+        scrollPane.add(scrollBar);
 
-        JPanel progressPanel = BoxLayoutUtils.createHorizontalPanel();
-        progressPanel.add(progressBar);
+        JPanel pMain = createPanel(BoxLayout.X_AXIS);
+        pMain.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-        JPanel textPanel = BoxLayoutUtils.createHorizontalPanel();
-        textPanel.add(scrollPane);
+        JPanel pText = createPanel(BoxLayout.Y_AXIS);
+        pText.add(textArea);
+        pText.add(Box.createVerticalStrut(10));
+        pText.add(progressBar);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-        JPanel grid = new JPanel(new GridLayout(1, 3, 5, 0));
-        grid.add(runButton);
-        grid.add(updateButton);
-        grid.add(exitButton);
-        buttonPanel.add(grid);
+        JPanel pButton = createPanel(BoxLayout.Y_AXIS);
+        pButton.add(runButton);
+        pButton.add(Box.createVerticalStrut(10));
+        pButton.add(updateButton);
+        pButton.add(Box.createVerticalGlue());
+        pButton.add(exitButton);
 
-        // Выравнивание компонентов
-        BoxLayoutUtils.setGroupAlignmentX(Component.LEFT_ALIGNMENT,
-                progressPanel, textPanel, buttonPanel);
+        makeSameSize(runButton, updateButton, exitButton);
 
-        main.add(progressPanel);
-        main.add(BoxLayoutUtils.createVerticalStrut(5));
-//        main.add(textPanel, BorderLayout.CENTER);
-        main.add(BoxLayoutUtils.createVerticalStrut(5));
-        main.add(buttonPanel, BorderLayout.SOUTH);
+        pMain.add(pText);
+        pMain.add(Box.createHorizontalStrut(15));
+        pMain.add(pButton);
 
-        // Version 2
-//        JPanel gridProcess = new JPanel(new GridLayout(1, 1, 5, 0));
-//        gridProcess.add(progressBar);
-//
-//        JPanel gridText = new JPanel(new GridLayout(1, 1, 5, 0));
-//        gridText.add(scrollPane);
-//
-//        JPanel gridButton = new JPanel(new GridLayout(1, 3, 5, 0));
-//        gridButton.add(runButton);
-//        gridButton.add(updateButton);
-//        gridButton.add(exitButton);
-//
-//        JPanel flow = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-//        flow.add(gridButton);
-//
-//        JPanel main = new JPanel(new GridLayout(3, 1, 5, 0));
-//        main.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-//        main.add(gridProcess);
-//        main.add(gridText);
-//        main.add(flow, BorderLayout.SOUTH);
+        return pMain;
+    }
 
-        return main;
+    private JPanel createPanel(int boxLayout) {
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, boxLayout));
+        return p;
     }
 
     private JMenu createFileMenu() {
@@ -344,6 +311,21 @@ public class MainForm extends JFrame {
         file.add(exit);
 
         return file;
+    }
+
+    private void makeSameSize(JComponent... cs) {
+        Dimension maxSize = cs[0].getPreferredSize();
+        for (JComponent c : cs) {
+            if (c.getPreferredSize().width > maxSize.width) {
+                maxSize = c.getPreferredSize();
+            }
+        }
+
+        for (JComponent c : cs) {
+            c.setPreferredSize(maxSize);
+            c.setMinimumSize(maxSize);
+            c.setMaximumSize(maxSize);
+        }
     }
 
     private Operations[] createPool() {
@@ -387,11 +369,11 @@ public class MainForm extends JFrame {
             widthWindow = Integer.parseInt(Settings.getString("width.size.window"));
             heightWindow = Integer.parseInt(Settings.getString("height.size.window"));
 
-//            if (widthWindow > MAXIMIM_WIDTH_WINDOW || heightWindow > MAXIMIM_HEIGHT_WINDOW
-//                    || widthWindow < MINIMUM_WIDTH_WINDOW || heightWindow < MINIMUM_HEIGHT_WINDOW) {
-//                throw new NotFoundPropertyException("Loaded size does not correspond " +
-//                        "to the maximum or minimum window sizes");
-//            }
+            if (widthWindow > MAXIMIM_WIDTH_WINDOW || heightWindow > MAXIMIM_HEIGHT_WINDOW
+                    || widthWindow < MINIMUM_WIDTH_WINDOW || heightWindow < MINIMUM_HEIGHT_WINDOW) {
+                throw new NotFoundPropertyException("Loaded size does not correspond " +
+                        "to the maximum or minimum window sizes");
+            }
             if (widthWindow > MAXIMIM_WIDTH_WINDOW || heightWindow > MAXIMIM_HEIGHT_WINDOW) {
                 throw new NotFoundPropertyException("Loaded size does not correspond " +
                         "to the maximum or minimum window sizes");
@@ -463,44 +445,44 @@ public class MainForm extends JFrame {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-        try {
-            UpdateProgram updateProgram = new UpdateProgram();
-            if (updateProgram.isUpdate()) {
+                try {
+                    UpdateProgram updateProgram = new UpdateProgram();
+                    if (updateProgram.isUpdate()) {
 
-                StringBuilder sbMsg = new StringBuilder();
-                sbMsg.append(Resource.getString("strNewVersionUpdate")
-                        + " \"" + Resource.getString("MainForm") + "\".\n\n");
-                sbMsg.append(String.format("%-24s%s\n",
-                        Resource.getString("strCurrentVersion") + ":",
-                        "v" + Resource.getString("Application.version")));
-                sbMsg.append(String.format("%-26s%s\n",
-                        Resource.getString("strNewVersion") + ":",
-                        "v" + updateProgram.getNewVersion()));
-                sbMsg.append(String.format(Resource.getCurrentLocale(), "%-21s%.3f MB\n\n",
-                        Resource.getString("strSizeUpdate") + ":",
-                        updateProgram.getSizeFile() / 1024.0 / 1024.0));
-                sbMsg.append(Resource.getString("strToUpgrade") + "?");
+                        StringBuilder sbMsg = new StringBuilder();
+                        sbMsg.append(Resource.getString("strNewVersionUpdate")
+                                + " \"" + Resource.getString("MainForm") + "\".\n\n");
+                        sbMsg.append(String.format("%-24s%s\n",
+                                Resource.getString("strCurrentVersion") + ":",
+                                "v" + Resource.getString("Application.version")));
+                        sbMsg.append(String.format("%-26s%s\n",
+                                Resource.getString("strNewVersion") + ":",
+                                "v" + updateProgram.getNewVersion()));
+                        sbMsg.append(String.format(Resource.getCurrentLocale(), "%-21s%.3f MB\n\n",
+                                Resource.getString("strSizeUpdate") + ":",
+                                updateProgram.getSizeFile() / 1024.0 / 1024.0));
+                        sbMsg.append(Resource.getString("strToUpgrade") + "?");
 
-                int res = JOptionPane.showConfirmDialog(null,
-                        sbMsg,
-                        Resource.getString("UpdateForm"),
-                        JOptionPane.YES_NO_OPTION);
-                if (res == JOptionPane.YES_OPTION) {
+                        int res = JOptionPane.showConfirmDialog(null,
+                                sbMsg,
+                                Resource.getString("UpdateForm"),
+                                JOptionPane.YES_NO_OPTION);
+                        if (res == JOptionPane.YES_OPTION) {
 
-                    if (updateProgram.update()) {
-                        String text = Resource.getString("strCompleteUpdate") + "."
-                                + "\n" + Resource.getString("strRestartProgram") + ".";
-                        JOptionPane.showMessageDialog(null,
-                                text,
-                                Resource.getString("InformationForm"),
-                                JOptionPane.INFORMATION_MESSAGE);
-                        System.exit(0);
+                            if (updateProgram.update()) {
+                                String text = Resource.getString("strCompleteUpdate") + "."
+                                        + "\n" + Resource.getString("strRestartProgram") + ".";
+                                JOptionPane.showMessageDialog(null,
+                                        text,
+                                        Resource.getString("InformationForm"),
+                                        JOptionPane.INFORMATION_MESSAGE);
+                                System.exit(0);
+                            }
+                        }
                     }
+                } catch (FTPException e) {
+                    log.log(Level.SEVERE, e.getMessage());
                 }
-            }
-        } catch (FTPException e) {
-            log.log(Level.SEVERE, e.getMessage());
-        }
             }
         });
         t.setDaemon(true);
