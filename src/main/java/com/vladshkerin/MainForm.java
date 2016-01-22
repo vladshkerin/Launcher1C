@@ -86,6 +86,7 @@ public class MainForm extends JFrame {
                     progressBar.setMaximum(poolOperations.length);
 
                     enterpriseButton.setEnabled(false);
+                    configButton.setEnabled(false);
                     updateButton.setEnabled(false);
                 }
             });
@@ -118,6 +119,7 @@ public class MainForm extends JFrame {
                 @Override
                 public void run() {
                     enterpriseButton.setEnabled(true);
+                    configButton.setEnabled(true);
                     updateButton.setEnabled(true);
                 }
             });
@@ -149,7 +151,10 @@ public class MainForm extends JFrame {
             processBuilder.redirectErrorStream(true);
             try {
                 Process process = processBuilder.start();
-                process.waitFor();
+                if (!(Operations.ENTERPRISE.equals(operation) ||
+                        Operations.CONFIG.equals(operation))) {
+                    process.waitFor();
+                }
             } catch (InterruptedException | IOException e) {
                 JOptionPane.showMessageDialog(null,
                         e.getMessage(),
@@ -163,9 +168,8 @@ public class MainForm extends JFrame {
         @Override
         protected void process(List<Void> chunks) {
             String date = new SimpleDateFormat("kk:mm:ss").format(System.currentTimeMillis());
-            textArea.append(date + " " +
-                    Resource.getString("strStartOperation") + " " +
-                    operation.toString() + " . . . ");
+            textArea.append(date + " - " +
+                    Resource.getString("str"+operation.toString()+"Operation"));
         }
 
         @Override
@@ -176,7 +180,7 @@ public class MainForm extends JFrame {
             } else {
                 synchronized (textArea) {
                     progressBar.setValue(progress);
-                    textArea.append(Resource.getString("strCompleteOperation") + "\n");
+                    textArea.append("\n");
                     scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
 
                     textArea.notify();
@@ -357,21 +361,18 @@ public class MainForm extends JFrame {
     }
 
     private void setSizeWindow() {
-
-        int defWidthWindow = (int) getSize().getWidth();
-        int defHeightWindow = (int) getSize().getHeight();
-
         int widthWindow;
         int heightWindow;
         try {
             widthWindow = Integer.parseInt(Settings.getString("width.size.window"));
+            widthWindow = (widthWindow < 400 ? 400 : widthWindow);
             heightWindow = Integer.parseInt(Settings.getString("height.size.window"));
+            heightWindow = (heightWindow < 250 ? 250 : heightWindow);
         } catch (NotFoundPropertyException | NumberFormatException e) {
-            widthWindow = defWidthWindow;
-            heightWindow = defHeightWindow;
+            widthWindow = 450;
+            heightWindow = 300;
             log.log(Level.WARNING, e.getMessage());
         }
-
         setSize(widthWindow, heightWindow);
     }
 
