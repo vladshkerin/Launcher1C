@@ -82,9 +82,21 @@ public class Command {
     public static String[] getString(Operations operation) {
         String[] cmd = new String[]{};
         switch (operation) {
-            case RUN:
+            case ENTERPRISE:
                 cmd = new String[]{
                         path1c, "ENTERPRISE", "/F" + pathBase, "/N" + "Ревизор", "/LRu  ", "/DisableStartupMessages"
+                };
+                break;
+            case CONFIG:
+                cmd = new String[]{
+                        path1c, "CONFIG", "/F" + pathBase, "/N" + "Ревизор", "/LRu  ", "/DisableStartupMessages"
+                };
+                break;
+            case UNLOAD_DB:
+                cmd = new String[]{
+                        path1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server", "/L" + lang,
+                        "/DumpIB" + pathBackup + "\\" + backBase,
+                        "/DisableStartupMessages"
                 };
                 break;
             case KILL:
@@ -97,13 +109,6 @@ public class Command {
                         "copy", "/Y",
                         pathBackup + "\\" + backBase + ".bak",
                         pathBackup + "\\" + backBase
-                };
-                break;
-            case UNLOAD_DB:
-                cmd = new String[]{
-                        path1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server", "/L" + lang,
-                        "/DumpIB" + pathBackup + "\\" + backBase,
-                        "/DisableStartupMessages"
                 };
                 break;
             case UPDATE:
