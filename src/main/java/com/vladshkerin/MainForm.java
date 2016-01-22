@@ -17,7 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,11 +26,6 @@ import java.util.logging.Logger;
 public class MainForm extends JFrame {
 
     private static Logger log = Logger.getLogger(UpdateProgram.class.getName());
-
-    private static final int MINIMUM_WIDTH_WINDOW = 400;
-    private static final int MINIMUM_HEIGHT_WINDOW = 250;
-    private static final int MAXIMIM_WIDTH_WINDOW = 600;
-    private static final int MAXIMIM_HEIGHT_WINDOW = 400;
 
     private final JTextArea textArea = new JTextArea();
     private JProgressBar progressBar = new JProgressBar();
@@ -53,14 +47,12 @@ public class MainForm extends JFrame {
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());
-        setMinimumSize(new Dimension(MINIMUM_WIDTH_WINDOW, MINIMUM_HEIGHT_WINDOW));
-        setMaximumSize(new Dimension(MAXIMIM_WIDTH_WINDOW, MAXIMIM_HEIGHT_WINDOW));
         setSizeWindow();
         setPositionWindow();
 
         add(createGUI());
 
-//        runCheckUpdate();
+        runCheckUpdate();
     }
 
     public class TaskPool implements Runnable {
@@ -155,14 +147,9 @@ public class MainForm extends JFrame {
 
             ProcessBuilder processBuilder = new ProcessBuilder(Command.getString(operation));
             processBuilder.redirectErrorStream(true);
-
             try {
                 Process process = processBuilder.start();
-                if (operation == Operations.ENTERPRISE || operation == Operations.CONFIG) {
-                    TimeUnit.SECONDS.sleep(1);
-                } else {
-                    process.waitFor();
-                }
+                process.waitFor();
             } catch (InterruptedException | IOException e) {
                 JOptionPane.showMessageDialog(null,
                         e.getMessage(),
@@ -183,8 +170,9 @@ public class MainForm extends JFrame {
 
         @Override
         public void done() {
-            if (operation == Operations.ENTERPRISE) {
-                System.exit(0);
+            if (Operations.ENTERPRISE.equals(operation) ||
+                    Operations.CONFIG.equals(operation)) {
+                runSaveSettingsAndExit();
             } else {
                 synchronized (textArea) {
                     progressBar.setValue(progress);
@@ -200,7 +188,7 @@ public class MainForm extends JFrame {
     protected class WindowListener extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent event) {
-            runDialogExit();
+            runSaveSettingsAndExit();
         }
     }
 
@@ -240,7 +228,7 @@ public class MainForm extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            runDialogExit();
+            runSaveSettingsAndExit();
         }
     }
 
@@ -378,16 +366,6 @@ public class MainForm extends JFrame {
         try {
             widthWindow = Integer.parseInt(Settings.getString("width.size.window"));
             heightWindow = Integer.parseInt(Settings.getString("height.size.window"));
-
-            if (widthWindow > MAXIMIM_WIDTH_WINDOW || heightWindow > MAXIMIM_HEIGHT_WINDOW
-                    || widthWindow < MINIMUM_WIDTH_WINDOW || heightWindow < MINIMUM_HEIGHT_WINDOW) {
-                throw new NotFoundPropertyException("Loaded size does not correspond " +
-                        "to the maximum or minimum window sizes");
-            }
-            if (widthWindow > MAXIMIM_WIDTH_WINDOW || heightWindow > MAXIMIM_HEIGHT_WINDOW) {
-                throw new NotFoundPropertyException("Loaded size does not correspond " +
-                        "to the maximum or minimum window sizes");
-            }
         } catch (NotFoundPropertyException | NumberFormatException e) {
             widthWindow = defWidthWindow;
             heightWindow = defHeightWindow;
@@ -399,9 +377,9 @@ public class MainForm extends JFrame {
 
     private void setPositionWindow() {
 
-        Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int defPositionX = (int) ((dimension.getWidth() - getWidth()) / 2);
-        int defPositionY = (int) ((dimension.getHeight() - getHeight()) / 2);
+        Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
+        int defPositionX = (int) ((dimScreen.getWidth() - getWidth()) / 2);
+        int defPositionY = (int) ((dimScreen.getHeight() - getHeight()) / 2);
 
         int positionX;
         int positionY;
@@ -409,7 +387,7 @@ public class MainForm extends JFrame {
             positionX = Integer.parseInt(Settings.getString("width.position.window"));
             positionY = Integer.parseInt(Settings.getString("height.position.window"));
 
-            if (positionX > dimension.getWidth() || positionY > dimension.getHeight()) {
+            if (positionX > dimScreen.getWidth() || positionY > dimScreen.getHeight()) {
                 throw new NotFoundPropertyException("Loaded position of the window exceeds screen size");
             }
         } catch (NotFoundPropertyException | NumberFormatException e) {
@@ -421,34 +399,27 @@ public class MainForm extends JFrame {
         setLocation(positionX, positionY);
     }
 
-    private void runDialogExit() {
-
-        int res = JOptionPane.showConfirmDialog(null,
-                Resource.getString("strQuestionExit"),
-                Resource.getString("QuestionForm"),
-                JOptionPane.YES_NO_OPTION);
-
-        if (res == JOptionPane.YES_OPTION) {
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Map<String, String> mapSettings = new LinkedHashMap<>();
-                    mapSettings.put("width.size.window", String.valueOf((int) getSize().getWidth()));
-                    mapSettings.put("height.size.window", String.valueOf((int) getSize().getHeight()));
-                    mapSettings.put("width.position.window", String.valueOf(getX()));
-                    mapSettings.put("height.position.window", String.valueOf(getY()));
-                    Settings.setProperties(mapSettings);
-                    try {
-                        Settings.storeProperties();
-                    } catch (IOException e) {
-                        log.log(Level.WARNING, e.getMessage());
-                    }
-                    System.exit(0);
+    private void runSaveSettingsAndExit() {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, String> mapSettings = new LinkedHashMap<>();
+                mapSettings.put("width.size.window", String.valueOf((int) getSize().getWidth()));
+                mapSettings.put("height.size.window", String.valueOf((int) getSize().getHeight()));
+                mapSettings.put("width.position.window", String.valueOf(getX()));
+                mapSettings.put("height.position.window", String.valueOf(getY()));
+                Settings.setProperties(mapSettings);
+                try {
+                    Settings.storeProperties();
+                } catch (IOException e) {
+                    log.log(Level.WARNING, e.getMessage());
                 }
-            });
-            t.setDaemon(true);
-            t.start();
-        }
+                System.exit(0);
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+        setVisible(false);
     }
 
     private void runCheckUpdate() {
