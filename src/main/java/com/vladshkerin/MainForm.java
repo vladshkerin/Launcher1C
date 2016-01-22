@@ -35,7 +35,8 @@ public class MainForm extends JFrame {
 
     private final JTextArea textArea = new JTextArea();
     private JProgressBar progressBar = new JProgressBar();
-    private JButton runButton = new JButton();
+    private JButton enterpriseButton = new JButton();
+    private JButton configButton = new JButton();
     private JButton updateButton = new JButton();
     private JButton exitButton = new JButton();
     private JScrollBar scrollBar = new JScrollBar();
@@ -92,7 +93,7 @@ public class MainForm extends JFrame {
                     progressBar.setMinimum(0);
                     progressBar.setMaximum(poolOperations.length);
 
-                    runButton.setEnabled(false);
+                    enterpriseButton.setEnabled(false);
                     updateButton.setEnabled(false);
                 }
             });
@@ -124,7 +125,7 @@ public class MainForm extends JFrame {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    runButton.setEnabled(true);
+                    enterpriseButton.setEnabled(true);
                     updateButton.setEnabled(true);
                 }
             });
@@ -157,7 +158,7 @@ public class MainForm extends JFrame {
 
             try {
                 Process process = processBuilder.start();
-                if (operation == Operations.RUN) {
+                if (operation == Operations.ENTERPRISE || operation == Operations.CONFIG) {
                     TimeUnit.SECONDS.sleep(1);
                 } else {
                     process.waitFor();
@@ -182,7 +183,7 @@ public class MainForm extends JFrame {
 
         @Override
         public void done() {
-            if (operation == Operations.RUN) {
+            if (operation == Operations.ENTERPRISE) {
                 System.exit(0);
             } else {
                 synchronized (textArea) {
@@ -206,8 +207,11 @@ public class MainForm extends JFrame {
     protected class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("runButton")) {
-                Thread thread = new Thread(new TaskPool(Operations.RUN));
+            if (e.getActionCommand().equals("enterpriseButton")) {
+                Thread thread = new Thread(new TaskPool(Operations.ENTERPRISE));
+                thread.start();
+            } else if (e.getActionCommand().equals("configButton")) {
+                Thread thread = new Thread(new TaskPool(Operations.CONFIG));
                 thread.start();
             } else if (e.getActionCommand().equals("updateButton")) {
                 Thread thread = new Thread(new TaskPool(createPool()));
@@ -246,19 +250,23 @@ public class MainForm extends JFrame {
         addWindowListener(windowListener);
 
         ButtonListener buttonListener = new ButtonListener();
-        runButton.addActionListener(buttonListener);
+        enterpriseButton.addActionListener(buttonListener);
+        configButton.addActionListener(buttonListener);
         updateButton.addActionListener(buttonListener);
         exitButton.addActionListener(new ExitAction());
 
-        runButton.setActionCommand("runButton");
+        enterpriseButton.setActionCommand("enterpriseButton");
+        configButton.setActionCommand("configButton");
         updateButton.setActionCommand("updateButton");
         exitButton.setActionCommand("exitButton");
 
-        runButton.setText(Resource.getString("RunButton"));
+        enterpriseButton.setText(Resource.getString("EnterpriseButton"));
+        configButton.setText(Resource.getString("ConfigButton"));
         updateButton.setText(Resource.getString("UpdateButton"));
         exitButton.setText(Resource.getString("ExitButton"));
 
-        runButton.setToolTipText(Resource.getString("strToolTipRunButton"));
+        enterpriseButton.setToolTipText(Resource.getString("strToolTipEnterpriseButton"));
+        configButton.setToolTipText(Resource.getString("strToolTipConfigButton"));
         updateButton.setToolTipText(Resource.getString("strToolTipUpdateButton"));
         textArea.setToolTipText(Resource.getString("strToolTipTextArea"));
         ToolTipManager ttm = ToolTipManager.sharedInstance();
@@ -278,13 +286,15 @@ public class MainForm extends JFrame {
         pText.add(progressBar);
 
         JPanel pButton = createPanel(BoxLayout.Y_AXIS);
-        pButton.add(runButton);
+        pButton.add(enterpriseButton);
+        pButton.add(Box.createVerticalStrut(10));
+        pButton.add(configButton);
         pButton.add(Box.createVerticalStrut(10));
         pButton.add(updateButton);
         pButton.add(Box.createVerticalGlue());
         pButton.add(exitButton);
 
-        makeSameSize(runButton, updateButton, exitButton);
+        makeSameSize(enterpriseButton, configButton, updateButton, exitButton);
 
         pMain.add(pText);
         pMain.add(Box.createHorizontalStrut(15));
@@ -450,8 +460,9 @@ public class MainForm extends JFrame {
                     if (updateProgram.isUpdate()) {
 
                         StringBuilder sbMsg = new StringBuilder();
-                        sbMsg.append(Resource.getString("strNewVersionUpdate")
-                                + " \"" + Resource.getString("MainForm") + "\".\n\n");
+                        sbMsg.append(String.format("%s\n\n",
+                                Resource.getString("strNewVersionUpdate") +
+                                        " \"" + Resource.getString("MainForm") + "\"."));
                         sbMsg.append(String.format("%-24s%s\n",
                                 Resource.getString("strCurrentVersion") + ":",
                                 "v" + Resource.getString("Application.version")));
@@ -461,7 +472,8 @@ public class MainForm extends JFrame {
                         sbMsg.append(String.format(Resource.getCurrentLocale(), "%-21s%.3f MB\n\n",
                                 Resource.getString("strSizeUpdate") + ":",
                                 updateProgram.getSizeFile() / 1024.0 / 1024.0));
-                        sbMsg.append(Resource.getString("strToUpgrade") + "?");
+                        sbMsg.append(String.format("%s",
+                                Resource.getString("strToUpgrade") + "?"));
 
                         int res = JOptionPane.showConfirmDialog(null,
                                 sbMsg,
