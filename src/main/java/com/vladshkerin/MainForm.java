@@ -6,6 +6,10 @@ import com.vladshkerin.exception.NotFoundPropertyException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,11 +33,11 @@ public class MainForm extends JFrame {
 
     private final JTextArea textArea = new JTextArea();
     private JProgressBar progressBar = new JProgressBar();
-    private JButton enterpriseButton = new JButton();
-    private JButton configButton = new JButton();
-    private JButton updateButton = new JButton();
+    private ButtonGroup buttonGroup = new ButtonGroup();
+    private JToggleButton enterpriseButton = new JToggleButton();
+    private JToggleButton configButton = new JToggleButton();
+    private JToggleButton updateButton = new JToggleButton();
     private JButton exitButton = new JButton();
-    private JScrollBar scrollBar = new JScrollBar();
     private JScrollPane scrollPane = new JScrollPane();
 
     public MainForm() {
@@ -76,6 +80,12 @@ public class MainForm extends JFrame {
                         Resource.getString("strPathNotFound") + ":\n\"" + e.getMessage() + "\"",
                         Resource.getString("ErrorForm"),
                         JOptionPane.ERROR_MESSAGE);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        buttonGroup.clearSelection();
+                    }
+                });
                 return;
             }
 
@@ -84,10 +94,6 @@ public class MainForm extends JFrame {
                 public void run() {
                     progressBar.setMinimum(0);
                     progressBar.setMaximum(poolOperations.length);
-
-                    enterpriseButton.setEnabled(false);
-                    configButton.setEnabled(false);
-                    updateButton.setEnabled(false);
                 }
             });
 
@@ -118,9 +124,7 @@ public class MainForm extends JFrame {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    enterpriseButton.setEnabled(true);
-                    configButton.setEnabled(true);
-                    updateButton.setEnabled(true);
+                    buttonGroup.clearSelection();
                 }
             });
 
@@ -169,7 +173,7 @@ public class MainForm extends JFrame {
         protected void process(List<Void> chunks) {
             String date = new SimpleDateFormat("kk:mm:ss").format(System.currentTimeMillis());
             textArea.append(date + " - " +
-                    Resource.getString("str"+operation.toString()+"Operation"));
+                    Resource.getString("str" + operation.toString() + "Operation"));
         }
 
         @Override
@@ -237,7 +241,6 @@ public class MainForm extends JFrame {
     }
 
     private JPanel createGUI() {
-
         WindowListener windowListener = new WindowListener();
         addWindowListener(windowListener);
 
@@ -260,21 +263,22 @@ public class MainForm extends JFrame {
         enterpriseButton.setToolTipText(Resource.getString("strToolTipEnterpriseButton"));
         configButton.setToolTipText(Resource.getString("strToolTipConfigButton"));
         updateButton.setToolTipText(Resource.getString("strToolTipUpdateButton"));
-        textArea.setToolTipText(Resource.getString("strToolTipTextArea"));
-        ToolTipManager ttm = ToolTipManager.sharedInstance();
-        ttm.setDismissDelay(10000);
 
+        buttonGroup.add(enterpriseButton);
+        buttonGroup.add(configButton);
+        buttonGroup.add(updateButton);
+
+        textArea.setBorder(BorderFactory.createLineBorder(Color.lightGray));
         progressBar.setOrientation(SwingConstants.HORIZONTAL);
 
-        scrollPane.add(textArea);
-        scrollPane.add(scrollBar);
-
         JPanel pMain = createPanel(BoxLayout.X_AXIS);
-        pMain.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
+        pMain.setBorder(BorderFactory.createEmptyBorder(10, 6, 8, 8));
 
         JPanel pText = createPanel(BoxLayout.Y_AXIS);
+        pText.setBorder(new CompoundBorder(
+                new TitledBorder("Информационные базы"), new EmptyBorder(4, 4, 4, 4)));
         pText.add(textArea);
-        pText.add(Box.createVerticalStrut(10));
+        pText.add(Box.createVerticalStrut(8));
         pText.add(progressBar);
 
         JPanel pButton = createPanel(BoxLayout.Y_AXIS);
@@ -289,7 +293,7 @@ public class MainForm extends JFrame {
         makeSameSize(enterpriseButton, configButton, updateButton, exitButton);
 
         pMain.add(pText);
-        pMain.add(Box.createHorizontalStrut(15));
+        pMain.add(Box.createHorizontalStrut(8));
         pMain.add(pButton);
 
         return pMain;
