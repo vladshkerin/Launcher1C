@@ -1,12 +1,10 @@
 package com.vladshkerin;
 
 import com.vladshkerin.exception.FTPException;
-import com.vladshkerin.exception.NotFoundPathException;
 import com.vladshkerin.exception.NotFoundPropertyException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -17,10 +15,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,16 +25,13 @@ import java.util.logging.Logger;
  */
 public class MainForm extends JFrame {
 
-    private static Logger log = Logger.getLogger(UpdateProgram.class.getName());
+    private static Logger log = Logger.getLogger(MainForm.class.getName());
 
     private final JTextArea textArea = new JTextArea();
-    private JProgressBar progressBar = new JProgressBar();
-    private ButtonGroup buttonGroup = new ButtonGroup();
-    private JToggleButton enterpriseButton = new JToggleButton();
-    private JToggleButton configButton = new JToggleButton();
-    private JToggleButton updateButton = new JToggleButton();
+    private JButton enterpriseButton = new JButton();
+    private JButton configButton = new JButton();
+    private JButton updateButton = new JButton();
     private JButton exitButton = new JButton();
-    private JScrollPane scrollPane = new JScrollPane();
 
     public MainForm() {
         try {
@@ -59,141 +52,8 @@ public class MainForm extends JFrame {
         runCheckUpdate();
     }
 
-    public class TaskPool implements Runnable {
-
-        private Operations[] poolOperations;
-
-        public TaskPool(Operations[] pool) {
-            this.poolOperations = pool;
-        }
-
-        public TaskPool(Operations operation) {
-            this.poolOperations = new Operations[]{operation};
-        }
-
-        @Override
-        public void run() {
-            try {
-                Command.checkDefaultPath();
-            } catch (NotFoundPathException e) {
-                JOptionPane.showMessageDialog(null,
-                        Resource.getString("strPathNotFound") + ":\n\"" + e.getMessage() + "\"",
-                        Resource.getString("ErrorForm"),
-                        JOptionPane.ERROR_MESSAGE);
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        buttonGroup.clearSelection();
-                    }
-                });
-                return;
-            }
-
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    progressBar.setMinimum(0);
-                    progressBar.setMaximum(poolOperations.length);
-                }
-            });
-
-            int progress = 0;
-            for (Operations operation : poolOperations) {
-                try {
-                    synchronized (textArea) {
-                        TaskWorker taskWorker = new TaskWorker(operation, ++progress);
-                        taskWorker.execute();
-
-                        textArea.wait();
-                    }
-
-                    if (Operations.UNLOAD_DB.equals(operation)) {
-                        try {
-                            Settings.setProperty("last.date.unload_db",
-                                    new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
-                            Settings.storeProperties();
-                        } catch (IOException e) {
-                            //TODO empty
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    log.log(Level.SEVERE, "Error wait TaskWorker: ", e.getMessage());
-                }
-            }
-
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    buttonGroup.clearSelection();
-                }
-            });
-
-            Toolkit.getDefaultToolkit().beep();
-
-            JOptionPane.showConfirmDialog(null,
-                    Resource.getString("strCompleteUpdate") + "!",
-                    Resource.getString("WarningForm"),
-                    JOptionPane.DEFAULT_OPTION);
-        }
-    }
-
-    public class TaskWorker extends SwingWorker<Void, Void> {
-
-        private Operations operation;
-        private int progress;
-
-        public TaskWorker(Operations operation, int progress) {
-            this.operation = operation;
-            this.progress = progress;
-        }
-
-        @Override
-        public Void doInBackground() {
-            publish();
-
-            ProcessBuilder processBuilder = new ProcessBuilder(Command.getString(operation));
-            processBuilder.redirectErrorStream(true);
-            try {
-                Process process = processBuilder.start();
-                if (!(Operations.ENTERPRISE.equals(operation) ||
-                        Operations.CONFIG.equals(operation))) {
-                    process.waitFor();
-                }
-            } catch (InterruptedException | IOException e) {
-                JOptionPane.showMessageDialog(null,
-                        e.getMessage(),
-                        Resource.getString("ErrorForm"),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void process(List<Void> chunks) {
-            String date = new SimpleDateFormat("kk:mm:ss").format(System.currentTimeMillis());
-            textArea.append(date + " - " +
-                    Resource.getString("str" + operation.toString() + "Operation"));
-        }
-
-        @Override
-        public void done() {
-            if (Operations.ENTERPRISE.equals(operation) ||
-                    Operations.CONFIG.equals(operation)) {
-                runSaveSettingsAndExit();
-            } else {
-                synchronized (textArea) {
-                    progressBar.setValue(progress);
-                    textArea.append("\n");
-                    scrollPane.getVerticalScrollBar().setValue(scrollPane.getVerticalScrollBar().getMaximum());
-
-                    textArea.notify();
-                }
-            }
-        }
-    }
-
     protected class WindowListener extends WindowAdapter {
+
         @Override
         public void windowClosing(WindowEvent event) {
             runSaveSettingsAndExit();
@@ -201,17 +61,18 @@ public class MainForm extends JFrame {
     }
 
     protected class ButtonListener implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equals("enterpriseButton")) {
-                Thread thread = new Thread(new TaskPool(Operations.ENTERPRISE));
-                thread.start();
+                runProcessBuilder(Operations.ENTERPRISE);
+                runSaveSettingsAndExit();
             } else if (e.getActionCommand().equals("configButton")) {
-                Thread thread = new Thread(new TaskPool(Operations.CONFIG));
-                thread.start();
+                runProcessBuilder(Operations.CONFIG);
+                runSaveSettingsAndExit();
             } else if (e.getActionCommand().equals("updateButton")) {
-                Thread thread = new Thread(new TaskPool(createPool()));
-                thread.start();
+                UpdateBaseForm form = new UpdateBaseForm(MainForm.this);
+                form.runUpdateBase();
             }
         }
     }
@@ -224,8 +85,7 @@ public class MainForm extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-//            new UpdateForm(Launcher1C.MainForm);
-            new UpdateForm(new JFrame());
+            new UpdateForm(MainForm.this);
         }
     }
 
@@ -264,45 +124,36 @@ public class MainForm extends JFrame {
         configButton.setToolTipText(Resource.getString("strToolTipConfigButton"));
         updateButton.setToolTipText(Resource.getString("strToolTipUpdateButton"));
 
-        buttonGroup.add(enterpriseButton);
-        buttonGroup.add(configButton);
-        buttonGroup.add(updateButton);
-
         textArea.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-        progressBar.setOrientation(SwingConstants.HORIZONTAL);
 
-        JPanel pMain = createPanel(BoxLayout.X_AXIS);
-        pMain.setBorder(BorderFactory.createEmptyBorder(10, 6, 8, 8));
+        JPanel pMain = BoxLayoutUtils.createHorizontalPanel();
+        pMain.setBorder(BorderFactory.createEmptyBorder(8, 5, 5, 8));
 
-        JPanel pText = createPanel(BoxLayout.Y_AXIS);
+        JPanel pText = BoxLayoutUtils.createVerticalPanel();
         pText.setBorder(new CompoundBorder(
                 new TitledBorder("Информационные базы"), new EmptyBorder(4, 4, 4, 4)));
         pText.add(textArea);
-        pText.add(Box.createVerticalStrut(8));
-        pText.add(progressBar);
 
-        JPanel pButton = createPanel(BoxLayout.Y_AXIS);
+        JPanel pButton = BoxLayoutUtils.createVerticalPanel();
+        pButton.add(BoxLayoutUtils.createVerticalStrut(6));
         pButton.add(enterpriseButton);
-        pButton.add(Box.createVerticalStrut(10));
+        pButton.add(BoxLayoutUtils.createVerticalStrut(10));
         pButton.add(configButton);
-        pButton.add(Box.createVerticalStrut(10));
+        pButton.add(BoxLayoutUtils.createVerticalStrut(10));
         pButton.add(updateButton);
-        pButton.add(Box.createVerticalGlue());
+        pButton.add(BoxLayoutUtils.createVerticalGlue());
         pButton.add(exitButton);
+        pButton.add(BoxLayoutUtils.createVerticalStrut(3));
 
-        makeSameSize(enterpriseButton, configButton, updateButton, exitButton);
+        GUITools.makeSameSize(enterpriseButton, configButton, updateButton, exitButton);
+
+        BoxLayoutUtils.setGroupAlignmentY(Component.TOP_ALIGNMENT, pText, pButton, pMain);
 
         pMain.add(pText);
-        pMain.add(Box.createHorizontalStrut(8));
+        pMain.add(Box.createHorizontalStrut(7));
         pMain.add(pButton);
 
         return pMain;
-    }
-
-    private JPanel createPanel(int boxLayout) {
-        JPanel p = new JPanel();
-        p.setLayout(new BoxLayout(p, boxLayout));
-        return p;
     }
 
     private JMenu createFileMenu() {
@@ -317,51 +168,6 @@ public class MainForm extends JFrame {
         file.add(exit);
 
         return file;
-    }
-
-    private void makeSameSize(JComponent... cs) {
-        Dimension maxSize = cs[0].getPreferredSize();
-        for (JComponent c : cs) {
-            if (c.getPreferredSize().width > maxSize.width) {
-                maxSize = c.getPreferredSize();
-            }
-        }
-
-        for (JComponent c : cs) {
-            c.setPreferredSize(maxSize);
-            c.setMinimumSize(maxSize);
-            c.setMaximumSize(maxSize);
-        }
-    }
-
-    private Operations[] createPool() {
-        Operations[] arrayOperations;
-        Calendar currentCalendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
-        Calendar lastCalendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
-        try {
-            String strLastDate = Settings.getString("last.date.unload_db");
-            SimpleDateFormat format = new SimpleDateFormat();
-            format.applyPattern("dd.MM.yyyy");
-            lastCalendar.setTime(format.parse(strLastDate));
-            lastCalendar.add(Calendar.DAY_OF_YEAR, 7);
-        } catch (NotFoundPropertyException | ParseException e) {
-            lastCalendar = currentCalendar;
-            log.log(Level.WARNING, e.getMessage());
-        }
-
-        if (lastCalendar.compareTo(currentCalendar) <= 0) {
-            arrayOperations = new Operations[]{
-                    Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
-                    Operations.UPGRADE, Operations.TEST, Operations.UPDATE
-            };
-        } else {
-            arrayOperations = new Operations[]{
-                    Operations.KILL, Operations.UPDATE,
-                    Operations.UPGRADE, Operations.UPDATE
-            };
-        }
-
-        return arrayOperations;
     }
 
     private void setSizeWindow() {
@@ -381,7 +187,6 @@ public class MainForm extends JFrame {
     }
 
     private void setPositionWindow() {
-
         Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
         int defPositionX = (int) ((dimScreen.getWidth() - getWidth()) / 2);
         int defPositionY = (int) ((dimScreen.getHeight() - getHeight()) / 2);
@@ -475,5 +280,19 @@ public class MainForm extends JFrame {
         });
         t.setDaemon(true);
         t.start();
+    }
+
+    private void runProcessBuilder(Operations operations) {
+        ProcessBuilder process = new ProcessBuilder(
+                Command.getString(operations));
+        try {
+            process.start();
+        } catch (IOException f) {
+            JOptionPane.showMessageDialog(null,
+                    f.getMessage(),
+                    Resource.getString("ErrorForm"),
+                    JOptionPane.ERROR_MESSAGE);
+            log.log(Level.SEVERE, f.getMessage());
+        }
     }
 }
