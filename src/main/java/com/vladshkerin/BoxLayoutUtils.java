@@ -36,6 +36,16 @@ public class BoxLayoutUtils {
         return Box.createRigidArea(new Dimension(size, 0));
     }
 
+    // создаёт вертикальную пружыну
+    public static Component createVerticalGlue() {
+        return Box.createVerticalGlue();
+    }
+
+    // создаёт горизонтальную пружыну
+    public static Component createHorizontalGlue() {
+        return Box.createHorizontalGlue();
+    }
+
     // задаёт единое выравнивание по оси X для группы компонентов
     public static void setGroupAlignmentX(float alignment, JComponent... cs) {
         for (JComponent c : cs) {
