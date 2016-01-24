@@ -18,7 +18,7 @@ public class Settings {
 
     private static final String FILE_NAME_SETTINGS = "settings.ini";
 
-    private static Logger log = Logger.getLogger(UpdateProgram.class.getName());
+    private static Logger log = Logger.getLogger(Settings.class.getName());
     private static String currentPath;
     private static Properties properties;
 
