@@ -15,7 +15,7 @@ public class GUITools {
 
     // Придание группе компонентов одинаковых размеров
     // (минимальных, предпочтительных и максимальных).
-    private void makeSameSize(JComponent... cs) {
+    public static void makeSameSize(JComponent... cs) {
         Dimension maxSize = cs[0].getPreferredSize();
         for (JComponent c : cs) {
             if (c.getPreferredSize().width > maxSize.width) {
