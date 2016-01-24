@@ -11,8 +11,6 @@ import java.util.logging.LogManager;
  */
 public class Launcher1C {
 
-//    protected static JFrame MainForm;
-
     public static void main(String[] args) {
         try {
             LogManager.getLogManager().readConfiguration(
