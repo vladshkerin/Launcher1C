@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class UpdateForm extends JDialog {
 
-    private static Logger log = Logger.getLogger(UpdateProgram.class.getName());
+    private static Logger log = Logger.getLogger(UpdateForm.class.getName());
 
     private static final int WIDTH_WINDOW = 500;
     private static final int HEIGHT_WINDOW = 100;
@@ -41,8 +41,6 @@ public class UpdateForm extends JDialog {
         setVisible(true);
 
         updateProgram = new UpdateProgram();
-
-        runCheckUpdate();
     }
 
     public void runCheckUpdate() {
