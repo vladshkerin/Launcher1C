@@ -15,16 +15,16 @@ import java.util.logging.Logger;
  */
 public class UpdateBaseForm extends JDialog {
 
-    private static Logger log = Logger.getLogger(UpdateProgram.class.getName());
+    private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
 
-    private static final int WIDTH_WINDOW = 500;
-    private static final int HEIGHT_WINDOW = 100;
+    private static final int WIDTH_WINDOW = 380;
+    private static final int HEIGHT_WINDOW = 230;
 
-    private JTextArea textArea = new JTextArea();
+    private final JTextArea textArea = new JTextArea();
+    private JProgressBar progressBar = new JProgressBar();
     private JButton stopButton = new JButton();
     private JButton closeButton = new JButton();
-
-    UpdateBaseForm updateBaseForm;
+    private Thread threadUpdateBase;
 
     public UpdateBaseForm(JFrame parent) {
         super(parent, Resource.getString("UpdateBaseForm"));
@@ -32,14 +32,31 @@ public class UpdateBaseForm extends JDialog {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            log.log(Level.WARNING, "Error set look and feel in update form.");
+            log.log(Level.WARNING, "Error set look and feel in update base form.");
         }
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());
         setSize(WIDTH_WINDOW, HEIGHT_WINDOW);
+        setPositionWindow();
 
-        add(createGUI(), BorderLayout.CENTER);
+        add(createGUI());
         setVisible(true);
+    }
+
+    private void setPositionWindow() {
+        Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
+        int positionX = (int) ((dimScreen.getWidth() - WIDTH_WINDOW) / 2);
+        int positionY = (int) ((dimScreen.getHeight() - HEIGHT_WINDOW) / 2);
+
+        setLocation(positionX, positionY);
+    }
+
+    public void runUpdateBase() {
+        TaskPool taskPool = new TaskPool();
+        taskPool.setTextArea(textArea);
+        taskPool.setProgressBar(progressBar);
+        threadUpdateBase = new Thread(taskPool);
+        threadUpdateBase.start();
     }
 
     public class ButtonListener implements ActionListener {
@@ -49,7 +66,7 @@ public class UpdateBaseForm extends JDialog {
             if (e.getActionCommand().equals("closeButton")) {
                 dispose();
             } else if (e.getActionCommand().equals("stopButton")) {
-                //TODO empty
+                threadUpdateBase.interrupt();
             }
         }
     }
@@ -59,30 +76,35 @@ public class UpdateBaseForm extends JDialog {
         stopButton.addActionListener(buttonListener);
         closeButton.addActionListener(buttonListener);
 
-        stopButton.setText(Resource.getString("stopButton"));
-        closeButton.setText(Resource.getString("closeButton"));
+        stopButton.setActionCommand("stopButton");
+        closeButton.setActionCommand("closeButton");
+
+        stopButton.setText(Resource.getString("StopButton"));
+        closeButton.setText(Resource.getString("CloseButton"));
+
+        progressBar.setOrientation(SwingConstants.HORIZONTAL);
 
         JPanel pMain = BoxLayoutUtils.createVerticalPanel();
-        pMain.setBorder(BorderFactory.createEmptyBorder(10, 6, 8, 6));
+        pMain.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-        JPanel pText = BoxLayoutUtils.createHorizontalPanel();
+        JPanel pText = BoxLayoutUtils.createVerticalPanel();
         pText.setBorder(new CompoundBorder(
                 new TitledBorder("Процесс обновления"), new EmptyBorder(4, 4, 4, 4)));
-        pText.add(textArea);
+        pText.add(new JScrollPane(textArea));
+        pText.add(BoxLayoutUtils.createVerticalStrut(4));
+        pText.add(progressBar);
 
         JPanel pButton = BoxLayoutUtils.createHorizontalPanel();
+        pButton.add(BoxLayoutUtils.createHorizontalGlue());
         pButton.add(stopButton);
-        pButton.add(BoxLayoutUtils.createHorizontalStrut(10));
+        pButton.add(BoxLayoutUtils.createHorizontalStrut(6));
         pButton.add(closeButton);
+        GUITools.makeSameSize(stopButton, closeButton);
 
         pMain.add(pText);
-        pMain.add(BoxLayoutUtils.createHorizontalStrut(8));
+        pMain.add(BoxLayoutUtils.createHorizontalStrut(10));
         pMain.add(pButton);
-
-        GUITools.makeSameSize(pText, pButton);
 
         return pMain;
     }
-
-
 }
