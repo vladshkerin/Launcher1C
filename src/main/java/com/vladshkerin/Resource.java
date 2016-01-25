@@ -1,5 +1,6 @@
 package com.vladshkerin;
 
+import java.awt.*;
 import java.io.File;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -13,6 +14,7 @@ public class Resource {
     private static ResourceBundle resourceVer;
     private static Locale currentLocale;
     private static String currentPath;
+    private static Font currentFont;
 
     static {
         String language = System.getProperties().getProperty("user.language");
@@ -22,6 +24,7 @@ public class Resource {
         currentPath = new File("").getAbsolutePath();
         resourceStr = ResourceBundle.getBundle("strings", currentLocale);
         resourceVer = ResourceBundle.getBundle("buildNumber");
+        currentFont = new Font("Arial", Font.PLAIN, 12);//UIManager.getFont("List.font")
     }
 
     private Resource() {
@@ -42,5 +45,9 @@ public class Resource {
 
     public static String getCurrentPath() {
         return currentPath;
+    }
+
+    public static Font getCurrentFont() {
+        return currentFont;
     }
 }
