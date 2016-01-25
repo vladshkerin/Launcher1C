@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 /**
  * Class for program updates
  */
-public class UpdateForm extends JDialog {
+public class UpdateProgramForm extends JDialog {
 
-    private static Logger log = Logger.getLogger(UpdateForm.class.getName());
+    private static Logger log = Logger.getLogger(UpdateProgramForm.class.getName());
 
     private static final int WIDTH_WINDOW = 500;
     private static final int HEIGHT_WINDOW = 100;
@@ -25,7 +25,7 @@ public class UpdateForm extends JDialog {
 
     private UpdateProgram updateProgram;
 
-    public UpdateForm(JFrame parent) {
+    public UpdateProgramForm(JFrame parent) {
         super(parent, Resource.getString("UpdateForm"));
 
         try {

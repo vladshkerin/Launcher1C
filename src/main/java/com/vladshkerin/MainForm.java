@@ -90,7 +90,7 @@ public class MainForm extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            new UpdateForm(MainForm.this);
+            new UpdateProgramForm(MainForm.this);
         }
     }
 
