@@ -6,11 +6,11 @@ package com.vladshkerin;
 public enum Operations {
     ENTERPRISE,
     CONFIG,
-    TEST,
+    CHECK,
     UNLOAD_DB,
     KILL,
     COPY,
     UPGRADE,
     UPDATE,
-    CHECK
+    TEST
 }

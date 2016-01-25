@@ -117,7 +117,7 @@ public class TaskPool implements Runnable {
         if (lastCalendar.compareTo(currentCalendar) <= 0) {
             arrayOperations = new Operations[]{
                     Operations.KILL, Operations.UNLOAD_DB, Operations.UPDATE,
-                    Operations.UPGRADE, Operations.CHECK, Operations.UPDATE
+                    Operations.UPGRADE, Operations.TEST, Operations.UPDATE
             };
         } else {
             arrayOperations = new Operations[]{

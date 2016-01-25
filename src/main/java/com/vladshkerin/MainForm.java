@@ -31,7 +31,7 @@ public class MainForm extends JFrame {
     private JButton enterpriseButton = new JButton();
     private JButton configButton = new JButton();
     private JButton updateButton = new JButton();
-    private JButton testButton = new JButton();
+    private JButton checkButton = new JButton();
     private JButton exitButton = new JButton();
 
     public MainForm() {
@@ -66,16 +66,18 @@ public class MainForm extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getActionCommand().equals("enterpriseButton")) {
-                runProcessBuilder(Operations.ENTERPRISE);
-                runSaveSettingsAndExit();
+                if (runProcessBuilder(Operations.ENTERPRISE)) {
+                    runSaveSettingsAndExit();
+                }
             } else if (e.getActionCommand().equals("configButton")) {
-                runProcessBuilder(Operations.CONFIG);
-                runSaveSettingsAndExit();
+                if (runProcessBuilder(Operations.CONFIG)) {
+                    runSaveSettingsAndExit();
+                }
             } else if (e.getActionCommand().equals("updateButton")) {
                 UpdateBaseForm form = new UpdateBaseForm(MainForm.this);
                 form.runUpdateBase();
-            } else if (e.getActionCommand().equals("testButton")) {
-                runProcessBuilder(Operations.TEST);
+            } else if (e.getActionCommand().equals("checkButton")) {
+                runProcessBuilder(Operations.CHECK);
             }
         }
     }
@@ -111,25 +113,25 @@ public class MainForm extends JFrame {
         enterpriseButton.addActionListener(buttonListener);
         configButton.addActionListener(buttonListener);
         updateButton.addActionListener(buttonListener);
-        testButton.addActionListener(buttonListener);
+        checkButton.addActionListener(buttonListener);
         exitButton.addActionListener(new ExitAction());
 
         enterpriseButton.setActionCommand("enterpriseButton");
         configButton.setActionCommand("configButton");
         updateButton.setActionCommand("updateButton");
-        testButton.setActionCommand("testButton");
+        checkButton.setActionCommand("checkButton");
         exitButton.setActionCommand("exitButton");
 
         enterpriseButton.setText(Resource.getString("EnterpriseButton"));
         configButton.setText(Resource.getString("ConfigButton"));
         updateButton.setText(Resource.getString("UpdateButton"));
-        testButton.setText(Resource.getString("TestButton"));
+        checkButton.setText(Resource.getString("CheckButton"));
         exitButton.setText(Resource.getString("ExitButton"));
 
         enterpriseButton.setToolTipText(Resource.getString("strToolTipEnterpriseButton"));
         configButton.setToolTipText(Resource.getString("strToolTipConfigButton"));
         updateButton.setToolTipText(Resource.getString("strToolTipUpdateButton"));
-        testButton.setToolTipText(Resource.getString("strToolTipTestButton"));
+        checkButton.setToolTipText(Resource.getString("strToolTipCheckButton"));
 
         textArea.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
@@ -149,12 +151,12 @@ public class MainForm extends JFrame {
         pButton.add(BoxLayoutUtils.createVerticalStrut(25));
         pButton.add(updateButton);
         pButton.add(BoxLayoutUtils.createVerticalStrut(10));
-        pButton.add(testButton);
+        pButton.add(checkButton);
         pButton.add(BoxLayoutUtils.createVerticalGlue());
         pButton.add(exitButton);
         pButton.add(BoxLayoutUtils.createVerticalStrut(3));
 
-        GUITools.makeSameSize(enterpriseButton, configButton, updateButton, testButton, exitButton);
+        GUITools.makeSameSize(enterpriseButton, configButton, updateButton, checkButton, exitButton);
 
         BoxLayoutUtils.setGroupAlignmentY(Component.TOP_ALIGNMENT, pText, pButton, pMain);
 
@@ -291,17 +293,19 @@ public class MainForm extends JFrame {
         t.start();
     }
 
-    private void runProcessBuilder(Operations operations) {
+    private boolean runProcessBuilder(Operations operations) {
         ProcessBuilder process = new ProcessBuilder(
                 Command.getString(operations));
         try {
             process.start();
-        } catch (IOException f) {
+            return true;
+        } catch (IOException e) {
             JOptionPane.showMessageDialog(null,
-                    f.getMessage(),
+                    e.getMessage(),
                     Resource.getString("ErrorForm"),
                     JOptionPane.ERROR_MESSAGE);
-            log.log(Level.SEVERE, f.getMessage());
+            log.log(Level.SEVERE, e.getMessage());
+            return false;
         }
     }
 }

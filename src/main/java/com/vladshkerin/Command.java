@@ -98,7 +98,7 @@ public class Command {
                         "/L" + lang, "/DisableStartupMessages"
                 };
                 break;
-            case TEST:
+            case CHECK:
                 cmd = new String[]{
                         path1c + fileTest
                 };
@@ -136,7 +136,7 @@ public class Command {
                         "/DisableStartupMessages"
                 };
                 break;
-            case CHECK:
+            case TEST:
                 cmd = new String[]{
                         path1c + file1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server",
                         "/L" + lang, "/IBCheckAndRepair -ReIndex -LogIntegrity",
