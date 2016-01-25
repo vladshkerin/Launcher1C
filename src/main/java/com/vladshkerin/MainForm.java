@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,7 +29,10 @@ public class MainForm extends JFrame {
 
     private static Logger log = Logger.getLogger(MainForm.class.getName());
 
-    private final JTextArea textArea = new JTextArea();
+    DefaultListModel listModel = new DefaultListModel();
+
+    private JList listBase = new JList(listModel);
+    private JLabel labelBase = new JLabel();
     private JButton enterpriseButton = new JButton();
     private JButton configButton = new JButton();
     private JButton updateButton = new JButton();
@@ -82,6 +87,16 @@ public class MainForm extends JFrame {
         }
     }
 
+    protected class SelectionListener implements ListSelectionListener {
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            int selected = ((JList) e.getSource()).getSelectedIndex();
+            String name = listModel.getElementAt(selected).toString();
+            labelBase.setText("File=\"" + name + "\";");
+        }
+    }
+
     protected class UpdateAction extends AbstractAction {
 
         UpdateAction() {
@@ -133,15 +148,31 @@ public class MainForm extends JFrame {
         updateButton.setToolTipText(Resource.getString("strToolTipUpdateButton"));
         checkButton.setToolTipText(Resource.getString("strToolTipCheckButton"));
 
-        textArea.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+        for (int i = 1; i <= 10; i++) {
+            String name = "MAG_" + (i < 10 ? "0" + i : i);
+            listModel.addElement(name);
+        }
+
+        listBase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listBase.setSelectedIndex(0);
+        listBase.setVisibleRowCount(5);
+        listBase.setFont(Resource.getCurrentFont());
+        listBase.addListSelectionListener(new SelectionListener());
+        JScrollPane scrollPane = new JScrollPane(listBase);
+
+        String name = listModel.getElementAt(listBase.getSelectedIndex()).toString();
+        labelBase.setText("File=\"" + name + "\";");
+        labelBase.setFont(Resource.getCurrentFont());
 
         JPanel pMain = BoxLayoutUtils.createHorizontalPanel();
         pMain.setBorder(BorderFactory.createEmptyBorder(8, 5, 5, 8));
 
         JPanel pText = BoxLayoutUtils.createVerticalPanel();
         pText.setBorder(new CompoundBorder(
-                new TitledBorder("Информационные базы"), new EmptyBorder(4, 4, 4, 4)));
-        pText.add(textArea);
+                new TitledBorder(Resource.getString("strTitleBase")), new EmptyBorder(4, 4, 4, 4)));
+        pText.add(scrollPane);
+        pText.add(BoxLayoutUtils.createVerticalStrut(5));
+        pText.add(labelBase);
 
         JPanel pButton = BoxLayoutUtils.createVerticalPanel();
         pButton.add(BoxLayoutUtils.createVerticalStrut(6));
@@ -158,6 +189,7 @@ public class MainForm extends JFrame {
 
         GUITools.makeSameSize(enterpriseButton, configButton, updateButton, checkButton, exitButton);
 
+        BoxLayoutUtils.setGroupAlignmentX(Component.LEFT_ALIGNMENT, scrollPane, labelBase);
         BoxLayoutUtils.setGroupAlignmentY(Component.TOP_ALIGNMENT, pText, pButton, pMain);
 
         pMain.add(pText);
