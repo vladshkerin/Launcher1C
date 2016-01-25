@@ -11,15 +11,19 @@ import java.text.SimpleDateFormat;
 public class Command {
 
     private static String path1c;
-    private static String pathBase;
     private static String pathBackup;
+    private static String pathBase;
+    private static String file1c;
+    private static String fileTest;
     private static String backBase;
     private static String lang;
 
     static {
-        path1c = "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\1cv8.exe";
+        path1c = "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\";
         pathBase = "C:\\base1c";
         pathBackup = "C:\\backup";
+        file1c = "1cv8.exe";
+        fileTest = "chdbfl.exe";
         backBase = "base1c_" +
                 new SimpleDateFormat("MM_yyyy").format(System.currentTimeMillis());
         lang = Resource.getCurrentLocale().getLanguage();
@@ -33,22 +37,22 @@ public class Command {
     public static void checkDefaultPath() throws NotFoundPathException {
         if (!(new File(path1c).exists())) {
             String[] mas = new String[]{
-                    "C:\\Program Files\\1cv82\\8.2.19.130\\bin\\1cv8.exe",
-                    "C:\\Program Files (x86)\\1cv82\\8.2.19.130\\bin\\1cv8.exe",
-                    "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\1cv8.exe",
-                    "C:\\Program Files (x86)\\1cv82\\8.2.19.90\\bin\\1cv8.exe",
-                    "C:\\Program Files\\1cv82\\8.2.19.83\\bin\\1cv8.exe",
-                    "C:\\Program Files (x86)\\1cv82\\8.2.19.83\\bin\\1cv8.exe",
-                    "C:\\Program Files\\1cv82\\8.2.19.76\\bin\\1cv8.exe",
-                    "C:\\Program Files (x86)\\1cv82\\8.2.19.76\\bin\\1cv8.exe",
-                    "C:\\Program Files\\1cv82\\8.2.18.109\\bin\\1cv8.exe",
-                    "C:\\Program Files (x86)\\1cv82\\8.2.18.109\\bin\\1cv8.exe",
-                    "C:\\Program Files\\1cv82\\8.2.17.169\\bin\\1cv8.exe",
-                    "C:\\Program Files (x86)\\1cv82\\8.2.17.169\\bin\\1cv8.exe",
-                    "C:\\Program Files\\1cv82\\8.2.16.362\\bin\\1cv8.exe",
-                    "C:\\Program Files (x86)\\1cv82\\8.2.16.362\\bin\\1cv8.exe",
-                    "C:\\Program Files\\1cv82\\8.2.15.294\\bin\\1cv8.exe",
-                    "C:\\Program Files (x86)\\1cv82\\8.2.15.294\\bin\\1cv8.exe"
+                    "C:\\Program Files\\1cv82\\8.2.19.130\\bin\\",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.19.130\\bin\\",
+                    "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.19.90\\bin\\",
+                    "C:\\Program Files\\1cv82\\8.2.19.83\\bin\\",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.19.83\\bin\\",
+                    "C:\\Program Files\\1cv82\\8.2.19.76\\bin\\",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.19.76\\bin\\",
+                    "C:\\Program Files\\1cv82\\8.2.18.109\\bin\\",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.18.109\\bin\\",
+                    "C:\\Program Files\\1cv82\\8.2.17.169\\bin\\",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.17.169\\bin\\",
+                    "C:\\Program Files\\1cv82\\8.2.16.362\\bin\\",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.16.362\\bin\\",
+                    "C:\\Program Files\\1cv82\\8.2.15.294\\bin\\",
+                    "C:\\Program Files (x86)\\1cv82\\8.2.15.294\\bin\\"
             };
 
             boolean flag = false;
@@ -84,20 +88,25 @@ public class Command {
         switch (operation) {
             case ENTERPRISE:
                 cmd = new String[]{
-                        path1c, "ENTERPRISE", "/F" + pathBase, "/N" + "Ревизор", "/L" + lang,
-                        "/DisableStartupMessages"
+                        path1c + file1c, "ENTERPRISE", "/F" + pathBase, "/N" + "Ревизор",
+                        "/L" + lang, "/DisableStartupMessages"
                 };
                 break;
             case CONFIG:
                 cmd = new String[]{
-                        path1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/L" + lang,
-                        "/DisableStartupMessages"
+                        path1c + file1c, "CONFIG", "/F" + pathBase, "/N" + "server",
+                        "/L" + lang, "/DisableStartupMessages"
+                };
+                break;
+            case TEST:
+                cmd = new String[]{
+                        path1c + fileTest
                 };
                 break;
             case UNLOAD_DB:
                 cmd = new String[]{
-                        path1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server", "/L" + lang,
-                        "/DumpIB" + pathBackup + "\\" + backBase,
+                        path1c + file1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server",
+                        "/L" + lang, "/DumpIB" + pathBackup + "\\" + backBase,
                         "/DisableStartupMessages"
                 };
                 break;
@@ -115,22 +124,22 @@ public class Command {
                 break;
             case UPDATE:
                 cmd = new String[]{
-                        path1c, "ENTERPRISE", "/F" + pathBase, "/N" + "server", "/P" + "server", "/L" + lang,
-                        "/C" + "OBMEN#ЦентральныйОбменРевизии#*",
+                        path1c + file1c, "ENTERPRISE", "/F" + pathBase, "/N" + "server", "/P" + "server",
+                        "/L" + lang, "/C" + "OBMEN#ЦентральныйОбменРевизии#*",
                         "/DisableStartupMessages"
                 };
                 break;
             case UPGRADE:
                 cmd = new String[]{
-                        path1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server", "/L" + lang,
-                        "/UpdateDBCfg",
+                        path1c + file1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server",
+                        "/L" + lang, "/UpdateDBCfg",
                         "/DisableStartupMessages"
                 };
                 break;
-            case TEST:
+            case CHECK:
                 cmd = new String[]{
-                        path1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server", "/L" + lang,
-                        "/IBCheckAndRepair -ReIndex -LogIntegrity",
+                        path1c + file1c, "CONFIG", "/F" + pathBase, "/N" + "server", "/P" + "server",
+                        "/L" + lang, "/IBCheckAndRepair -ReIndex -LogIntegrity",
                         "/DisableStartupMessages"
                 };
         }

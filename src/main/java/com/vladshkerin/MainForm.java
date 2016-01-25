@@ -31,6 +31,7 @@ public class MainForm extends JFrame {
     private JButton enterpriseButton = new JButton();
     private JButton configButton = new JButton();
     private JButton updateButton = new JButton();
+    private JButton testButton = new JButton();
     private JButton exitButton = new JButton();
 
     public MainForm() {
@@ -73,6 +74,8 @@ public class MainForm extends JFrame {
             } else if (e.getActionCommand().equals("updateButton")) {
                 UpdateBaseForm form = new UpdateBaseForm(MainForm.this);
                 form.runUpdateBase();
+            } else if (e.getActionCommand().equals("testButton")) {
+                runProcessBuilder(Operations.TEST);
             }
         }
     }
@@ -108,21 +111,25 @@ public class MainForm extends JFrame {
         enterpriseButton.addActionListener(buttonListener);
         configButton.addActionListener(buttonListener);
         updateButton.addActionListener(buttonListener);
+        testButton.addActionListener(buttonListener);
         exitButton.addActionListener(new ExitAction());
 
         enterpriseButton.setActionCommand("enterpriseButton");
         configButton.setActionCommand("configButton");
         updateButton.setActionCommand("updateButton");
+        testButton.setActionCommand("testButton");
         exitButton.setActionCommand("exitButton");
 
         enterpriseButton.setText(Resource.getString("EnterpriseButton"));
         configButton.setText(Resource.getString("ConfigButton"));
         updateButton.setText(Resource.getString("UpdateButton"));
+        testButton.setText(Resource.getString("TestButton"));
         exitButton.setText(Resource.getString("ExitButton"));
 
         enterpriseButton.setToolTipText(Resource.getString("strToolTipEnterpriseButton"));
         configButton.setToolTipText(Resource.getString("strToolTipConfigButton"));
         updateButton.setToolTipText(Resource.getString("strToolTipUpdateButton"));
+        testButton.setToolTipText(Resource.getString("strToolTipTestButton"));
 
         textArea.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 
@@ -139,13 +146,15 @@ public class MainForm extends JFrame {
         pButton.add(enterpriseButton);
         pButton.add(BoxLayoutUtils.createVerticalStrut(10));
         pButton.add(configButton);
-        pButton.add(BoxLayoutUtils.createVerticalStrut(10));
+        pButton.add(BoxLayoutUtils.createVerticalStrut(25));
         pButton.add(updateButton);
+        pButton.add(BoxLayoutUtils.createVerticalStrut(10));
+        pButton.add(testButton);
         pButton.add(BoxLayoutUtils.createVerticalGlue());
         pButton.add(exitButton);
         pButton.add(BoxLayoutUtils.createVerticalStrut(3));
 
-        GUITools.makeSameSize(enterpriseButton, configButton, updateButton, exitButton);
+        GUITools.makeSameSize(enterpriseButton, configButton, updateButton, testButton, exitButton);
 
         BoxLayoutUtils.setGroupAlignmentY(Component.TOP_ALIGNMENT, pText, pButton, pMain);
 
