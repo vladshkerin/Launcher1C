@@ -82,6 +82,10 @@ public class UpdateBaseForm extends JDialog {
         stopButton.setText(Resource.getString("StopButton"));
         closeButton.setText(Resource.getString("CloseButton"));
 
+        textArea.setEditable(false);
+        textArea.setFont(Resource.getCurrentFont());
+        JScrollPane scrollPane = new JScrollPane(textArea);
+
         progressBar.setOrientation(SwingConstants.HORIZONTAL);
 
         JPanel pMain = BoxLayoutUtils.createVerticalPanel();
@@ -91,7 +95,7 @@ public class UpdateBaseForm extends JDialog {
         pText.setBorder(new CompoundBorder(
                 new TitledBorder(Resource.getString("strTitleUpgradeProcess")),
                 new EmptyBorder(4, 4, 4, 4)));
-        pText.add(new JScrollPane(textArea));
+        pText.add(scrollPane);
         pText.add(BoxLayoutUtils.createVerticalStrut(4));
         pText.add(progressBar);
 
