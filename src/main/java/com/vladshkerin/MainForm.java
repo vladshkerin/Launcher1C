@@ -169,7 +169,8 @@ public class MainForm extends JFrame {
 
         JPanel pText = BoxLayoutUtils.createVerticalPanel();
         pText.setBorder(new CompoundBorder(
-                new TitledBorder(Resource.getString("strTitleBase")), new EmptyBorder(4, 4, 4, 4)));
+                new TitledBorder(Resource.getString("strTitleBase")),
+                new EmptyBorder(4, 4, 4, 4)));
         pText.add(scrollPane);
         pText.add(BoxLayoutUtils.createVerticalStrut(5));
         pText.add(labelBase);

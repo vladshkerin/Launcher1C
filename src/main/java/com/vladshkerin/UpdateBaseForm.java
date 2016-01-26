@@ -89,7 +89,8 @@ public class UpdateBaseForm extends JDialog {
 
         JPanel pText = BoxLayoutUtils.createVerticalPanel();
         pText.setBorder(new CompoundBorder(
-                new TitledBorder("Процесс обновления"), new EmptyBorder(4, 4, 4, 4)));
+                new TitledBorder(Resource.getString("strTitleUpgradeProcess")),
+                new EmptyBorder(4, 4, 4, 4)));
         pText.add(new JScrollPane(textArea));
         pText.add(BoxLayoutUtils.createVerticalStrut(4));
         pText.add(progressBar);
