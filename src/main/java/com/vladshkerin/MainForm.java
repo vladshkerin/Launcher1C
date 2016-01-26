@@ -1,6 +1,7 @@
 package com.vladshkerin;
 
 import com.vladshkerin.exception.FTPException;
+import com.vladshkerin.exception.NotFoundPathException;
 import com.vladshkerin.exception.NotFoundPropertyException;
 
 import javax.imageio.ImageIO;
@@ -327,16 +328,22 @@ public class MainForm extends JFrame {
     }
 
     private boolean runProcessBuilder(Operations operations) {
+        try {
+            Command.checkDefaultPath();
+        } catch (NotFoundPathException e) {
+            JOptionPane.showMessageDialog(null,
+                    Resource.getString("strPathNotFound") + ":\n\"" + e.getMessage() + "\"",
+                    Resource.getString("ErrorForm"),
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
         ProcessBuilder process = new ProcessBuilder(
                 Command.getString(operations));
         try {
             process.start();
             return true;
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null,
-                    e.getMessage(),
-                    Resource.getString("ErrorForm"),
-                    JOptionPane.ERROR_MESSAGE);
             log.log(Level.SEVERE, e.getMessage());
             return false;
         }
