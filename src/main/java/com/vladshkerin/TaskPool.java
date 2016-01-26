@@ -80,7 +80,7 @@ public class TaskPool implements Runnable {
                     }
                 }
             } catch (InterruptedException e) {
-                log.log(Level.WARNING, e.getMessage());
+                log.log(Level.WARNING, "interrupted pool operations.");
                 break;
             }
         }
