@@ -38,6 +38,7 @@ public class MainForm extends JFrame {
     private JButton configButton = new JButton();
     private JButton updateButton = new JButton();
     private JButton checkButton = new JButton();
+    private JButton settingButton = new JButton();
     private JButton exitButton = new JButton();
 
     public MainForm() {
@@ -84,6 +85,9 @@ public class MainForm extends JFrame {
                 form.runUpdateBase();
             } else if (e.getActionCommand().equals("checkButton")) {
                 runProcessBuilder(Operations.CHECK);
+            } else if (e.getActionCommand().equals("settingButton")) {
+                SettingsForm form = new SettingsForm(MainForm.this);
+                form.setVisible(true);
             }
         }
     }
@@ -122,6 +126,7 @@ public class MainForm extends JFrame {
     }
 
     private JPanel createGUI() {
+        // Settings objects
         WindowListener windowListener = new WindowListener();
         addWindowListener(windowListener);
 
@@ -130,24 +135,28 @@ public class MainForm extends JFrame {
         configButton.addActionListener(buttonListener);
         updateButton.addActionListener(buttonListener);
         checkButton.addActionListener(buttonListener);
+        settingButton.addActionListener(buttonListener);
         exitButton.addActionListener(new ExitAction());
 
         enterpriseButton.setActionCommand("enterpriseButton");
         configButton.setActionCommand("configButton");
         updateButton.setActionCommand("updateButton");
         checkButton.setActionCommand("checkButton");
+        settingButton.setActionCommand("settingButton");
         exitButton.setActionCommand("exitButton");
 
         enterpriseButton.setText(Resource.getString("EnterpriseButton"));
         configButton.setText(Resource.getString("ConfigButton"));
         updateButton.setText(Resource.getString("UpdateButton"));
         checkButton.setText(Resource.getString("CheckButton"));
+        settingButton.setText(Resource.getString("settingButton") + "...");
         exitButton.setText(Resource.getString("ExitButton"));
 
         enterpriseButton.setToolTipText(Resource.getString("strToolTipEnterpriseButton"));
         configButton.setToolTipText(Resource.getString("strToolTipConfigButton"));
         updateButton.setToolTipText(Resource.getString("strToolTipUpdateButton"));
         checkButton.setToolTipText(Resource.getString("strToolTipCheckButton"));
+        settingButton.setToolTipText(Resource.getString("strToolTipSettingButton"));
 
         for (int i = 1; i <= 10; i++) {
             String name = "MAG_" + (i < 10 ? "0" + i : i);
@@ -165,6 +174,7 @@ public class MainForm extends JFrame {
         labelBase.setText("File=\"" + name + "\";");
         labelBase.setFont(Resource.getCurrentFont());
 
+        // Layout objects on the form
         JPanel pMain = BoxLayoutUtils.createHorizontalPanel();
         pMain.setBorder(BorderFactory.createEmptyBorder(8, 5, 5, 8));
 
@@ -185,11 +195,14 @@ public class MainForm extends JFrame {
         pButton.add(updateButton);
         pButton.add(BoxLayoutUtils.createVerticalStrut(10));
         pButton.add(checkButton);
+        pButton.add(BoxLayoutUtils.createVerticalStrut(25));
+        pButton.add(settingButton);
         pButton.add(BoxLayoutUtils.createVerticalGlue());
         pButton.add(exitButton);
         pButton.add(BoxLayoutUtils.createVerticalStrut(3));
 
-        GUITools.makeSameSize(enterpriseButton, configButton, updateButton, checkButton, exitButton);
+        GUITools.makeSameSize(enterpriseButton, configButton, updateButton,
+                checkButton, settingButton, exitButton);
 
         BoxLayoutUtils.setGroupAlignmentX(Component.LEFT_ALIGNMENT, scrollPane, labelBase);
         BoxLayoutUtils.setGroupAlignmentY(Component.TOP_ALIGNMENT, pText, pButton, pMain);
