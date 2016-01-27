@@ -2,7 +2,7 @@ package com.vladshkerin;
 
 import com.vladshkerin.exception.FTPException;
 import com.vladshkerin.exception.NotFoundPathException;
-import com.vladshkerin.exception.NotFoundPropertyException;
+import com.vladshkerin.exception.NotFoundSettingException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -236,7 +236,7 @@ public class MainForm extends JFrame {
             widthWindow = (widthWindow < 400 ? 400 : widthWindow);
             heightWindow = Integer.parseInt(Settings.getString("height.size.window"));
             heightWindow = (heightWindow < 250 ? 250 : heightWindow);
-        } catch (NotFoundPropertyException | NumberFormatException e) {
+        } catch (NotFoundSettingException | NumberFormatException e) {
             widthWindow = 450;
             heightWindow = 300;
             log.log(Level.WARNING, e.getMessage());
@@ -256,9 +256,9 @@ public class MainForm extends JFrame {
             positionY = Integer.parseInt(Settings.getString("height.position.window"));
 
             if (positionX > dimScreen.getWidth() || positionY > dimScreen.getHeight()) {
-                throw new NotFoundPropertyException("Loaded position of the window exceeds screen size");
+                throw new NotFoundSettingException("Loaded position of the window exceeds screen size");
             }
-        } catch (NotFoundPropertyException | NumberFormatException e) {
+        } catch (NotFoundSettingException | NumberFormatException e) {
             positionX = defPositionX;
             positionY = defPositionY;
             log.log(Level.WARNING, e.getMessage());

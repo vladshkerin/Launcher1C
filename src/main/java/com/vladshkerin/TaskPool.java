@@ -1,7 +1,7 @@
 package com.vladshkerin;
 
 import com.vladshkerin.exception.NotFoundPathException;
-import com.vladshkerin.exception.NotFoundPropertyException;
+import com.vladshkerin.exception.NotFoundSettingException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -109,7 +109,7 @@ public class TaskPool implements Runnable {
             format.applyPattern("dd.MM.yyyy");
             lastCalendar.setTime(format.parse(strLastDate));
             lastCalendar.add(Calendar.DAY_OF_YEAR, 7);
-        } catch (NotFoundPropertyException | ParseException e) {
+        } catch (NotFoundSettingException | ParseException e) {
             lastCalendar = currentCalendar;
             log.log(Level.WARNING, e.getMessage());
         }

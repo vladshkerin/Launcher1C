@@ -1,6 +1,6 @@
 package com.vladshkerin;
 
-import com.vladshkerin.exception.NotFoundPropertyException;
+import com.vladshkerin.exception.NotFoundSettingException;
 
 import java.io.File;
 import java.io.FileReader;
@@ -32,16 +32,16 @@ public class Settings {
         //TODO empty
     }
 
+    public static String getString(String key) throws NotFoundSettingException {
+        if (properties.getProperty(key) == null) {
+            throw new NotFoundSettingException("Not found property: " + key);
+        }
+        return properties.getProperty(key);
+    }
+
     public static void setProperties(Map<String, String> map) {
         if (map.isEmpty()) return;
         properties.putAll(map);
-    }
-
-    public static String getString(String key) throws NotFoundPropertyException {
-        if (properties.getProperty(key) == null) {
-            throw new NotFoundPropertyException("Not found property: " + key);
-        }
-        return properties.getProperty(key);
     }
 
     public static void setProperty(String key, String value) {
