@@ -19,13 +19,13 @@ public class Settings {
     private static final String FILE_NAME_SETTINGS = "settings.ini";
 
     private static Logger log = Logger.getLogger(Settings.class.getName());
-    private static Properties properties;
+    private static Properties settings;
     private static String workPathProgram;
 
     static {
         workPathProgram = new File("").getAbsolutePath();
         File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
-        properties = getProperties(file);
+        settings = getSettings(file);
     }
 
     private Settings() {
@@ -33,24 +33,25 @@ public class Settings {
     }
 
     public static String getString(String key) throws NotFoundSettingException {
-        if (properties.getProperty(key) == null) {
-            throw new NotFoundSettingException("Not found property: " + key);
+        String property = settings.getProperty(key);
+        if (property == null) {
+            return getDefaultSetting(key);
         }
-        return properties.getProperty(key);
+        return property;
     }
 
     public static void setSettings(Map<String, String> map) {
         if (map.isEmpty()) return;
-        properties.putAll(map);
+        settings.putAll(map);
     }
 
     public static void setSetting(String key, String value) {
-        properties.setProperty(key, value);
+        settings.setProperty(key, value);
     }
 
     public static void storeSettings() throws IOException {
         File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
-        properties.store(new FileWriter(file), FILE_NAME_SETTINGS);
+        settings.store(new FileWriter(file), FILE_NAME_SETTINGS);
     }
 
     public static boolean checkPath(String path) {
@@ -92,47 +93,75 @@ public class Settings {
         return errorList;
     }
 
-    private static Properties getProperties(File file) {
-        Properties properties = new java.util.Properties();
+    private static Properties getSettings(File file) {
+        Properties settings = new java.util.Properties();
         try {
             if (file.exists()) {
-                properties.load(new FileReader(file));
+                settings.load(new FileReader(file));
             } else {
                 if (file.createNewFile()) {
-                    fillFileProperties(properties);
-                    properties.store(new FileWriter(file), FILE_NAME_SETTINGS);
+                    fillSettings(settings);
+                    settings.store(new FileWriter(file), FILE_NAME_SETTINGS);
                 } else {
                     throw new IOException();
                 }
             }
         } catch (IOException e) {
-            properties = new java.util.Properties();
+            settings = new java.util.Properties();
             log.log(Level.SEVERE, "Not found file settings: " + file.getAbsolutePath());
         }
 
-        return properties;
+        return settings;
     }
 
-    private static void fillFileProperties(Properties properties) {
-        Calendar calendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
-        calendar.add(Calendar.DAY_OF_YEAR, -7);
-
+    private static void fillSettings(Properties settings) {
         Map<String, String> mapSettings = new LinkedHashMap<>();
-        mapSettings.put("width.size.window", "450");
-        mapSettings.put("height.size.window", "350");
-        mapSettings.put("width.position.window", "30");
-        mapSettings.put("height.position.window", "30");
-        mapSettings.put("path.1c", getDefaultPath1c());
-        mapSettings.put("path.base", "C:\\base1c");
-        mapSettings.put("path.backup", "C:\\backup");
-        mapSettings.put("file.1c", "1cv8.exe");
-        mapSettings.put("file.test", "chdbfl.exe");
-        mapSettings.put("file.backup", "base1c_" +
-                new SimpleDateFormat("MM_yyyy").format(System.currentTimeMillis()));
-        mapSettings.put("last.date.unload_db",
-                new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime()));
+        try {
+            mapSettings.put("width.size.window", getDefaultSetting("width.size.window"));
+            mapSettings.put("height.size.window", getDefaultSetting("height.size.window"));
+            mapSettings.put("width.position.window", getDefaultSetting("width.position.window"));
+            mapSettings.put("height.position.window", getDefaultSetting("height.position.window"));
+            mapSettings.put("path.1c", getDefaultSetting("path.1c"));
+            mapSettings.put("path.base", getDefaultSetting("path.base"));
+            mapSettings.put("path.backup", getDefaultSetting("path.backup"));
+            mapSettings.put("file.1c", getDefaultSetting("file.1c"));
+            mapSettings.put("file.test", getDefaultSetting("file.test"));
+            mapSettings.put("file.backup", getDefaultSetting("file.backup"));
+            mapSettings.put("last.date.unload_db",getDefaultSetting("last.date.unload_db"));
+        } catch (NotFoundSettingException e) {
+            log.log(Level.CONFIG, e.getMessage());
+        }
+        settings.putAll(mapSettings);
+    }
 
-        properties.putAll(mapSettings);
+    private static String getDefaultSetting(String key) throws NotFoundSettingException {
+        switch (key) {
+            case "width.size.window":
+                return "450";
+            case "height.size.window":
+                return "350";
+            case "width.position.window":
+                return "30";
+            case "height.position.window":
+                return "30";
+            case "path.1c":
+                return getDefaultPath1c();
+            case "path.base":
+                return "C:\\base1c";
+            case "file.1c":
+                return "1cv8.exe";
+            case "file.test":
+                return "chdbfl.exe";
+            case "file.backup":
+                return "base1c_" +
+                        new SimpleDateFormat("MM_yyyy").format(System.currentTimeMillis());
+            case "last.date.unload_db":
+                Calendar calendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+                calendar.add(Calendar.DAY_OF_YEAR, -7);
+                return new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
+            default:
+                throw new NotFoundSettingException("Not found property: " + key);
+        }
     }
 
     private static String getDefaultPath1c() {
