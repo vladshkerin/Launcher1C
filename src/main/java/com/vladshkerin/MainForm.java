@@ -1,7 +1,6 @@
 package com.vladshkerin;
 
 import com.vladshkerin.exception.FTPException;
-import com.vladshkerin.exception.NotFoundPathException;
 import com.vladshkerin.exception.NotFoundSettingException;
 
 import javax.imageio.ImageIO;
@@ -18,6 +17,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -82,6 +82,7 @@ public class MainForm extends JFrame {
                 }
             } else if (e.getActionCommand().equals("updateButton")) {
                 UpdateBaseForm form = new UpdateBaseForm(MainForm.this);
+                form.setVisible(true);
                 form.runUpdateBase();
             } else if (e.getActionCommand().equals("checkButton")) {
                 runProcessBuilder(Operations.CHECK);
@@ -147,8 +148,8 @@ public class MainForm extends JFrame {
 
         enterpriseButton.setText(Resource.getString("EnterpriseButton"));
         configButton.setText(Resource.getString("ConfigButton"));
-        updateButton.setText(Resource.getString("UpdateButton"));
-        checkButton.setText(Resource.getString("CheckButton"));
+        updateButton.setText(Resource.getString("UpdateButton") + "...");
+        checkButton.setText(Resource.getString("CheckButton") + "...");
         settingButton.setText(Resource.getString("settingButton") + "...");
         exitButton.setText(Resource.getString("ExitButton"));
 
@@ -341,22 +342,24 @@ public class MainForm extends JFrame {
     }
 
     private boolean runProcessBuilder(Operations operations) {
-        try {
-            Command.checkDefaultPath();
-        } catch (NotFoundPathException e) {
+        ArrayList<String> errorList = (ArrayList<String>) Settings.checkPath(operations);
+        if (!errorList.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String str : errorList) {
+                sb.append(str);
+            }
             JOptionPane.showMessageDialog(null,
-                    Resource.getString("strPathNotFound") + ":\n\"" + e.getMessage() + "\"",
+                    Resource.getString("ErrorRunProcess") + ".\n\n" + sb,
                     Resource.getString("ErrorForm"),
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
-        ProcessBuilder process = new ProcessBuilder(
-                Command.getString(operations));
+        ProcessBuilder process = new ProcessBuilder(Command.getString(operations));
         try {
             process.start();
             return true;
-        } catch (IOException e) {
+        } catch (ArrayIndexOutOfBoundsException | SecurityException | IOException e) {
             log.log(Level.SEVERE, e.getMessage());
             return false;
         }
