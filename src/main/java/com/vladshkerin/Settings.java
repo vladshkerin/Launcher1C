@@ -35,7 +35,7 @@ public class Settings {
     public static String getString(String key) throws NotFoundSettingException {
         String property = settings.getProperty(key);
         if (property == null) {
-            return getDefaultSetting(key);
+            return getStringSettingDefault(key);
         }
         return property;
     }
@@ -98,9 +98,10 @@ public class Settings {
         try {
             if (file.exists()) {
                 settings.load(new FileReader(file));
+                checkFillSettings(settings);
             } else {
                 if (file.createNewFile()) {
-                    fillSettings(settings);
+                    settings.putAll(getMapSettingsDefault());
                     settings.store(new FileWriter(file), FILE_NAME_SETTINGS);
                 } else {
                     throw new IOException();
@@ -114,27 +115,45 @@ public class Settings {
         return settings;
     }
 
-    private static void fillSettings(Properties settings) {
-        Map<String, String> mapSettings = new LinkedHashMap<>();
-        try {
-            mapSettings.put("width.size.window", getDefaultSetting("width.size.window"));
-            mapSettings.put("height.size.window", getDefaultSetting("height.size.window"));
-            mapSettings.put("width.position.window", getDefaultSetting("width.position.window"));
-            mapSettings.put("height.position.window", getDefaultSetting("height.position.window"));
-            mapSettings.put("path.1c", getDefaultSetting("path.1c"));
-            mapSettings.put("path.base", getDefaultSetting("path.base"));
-            mapSettings.put("path.backup", getDefaultSetting("path.backup"));
-            mapSettings.put("file.1c", getDefaultSetting("file.1c"));
-            mapSettings.put("file.test", getDefaultSetting("file.test"));
-            mapSettings.put("file.backup", getDefaultSetting("file.backup"));
-            mapSettings.put("last.date.unload_db",getDefaultSetting("last.date.unload_db"));
-        } catch (NotFoundSettingException e) {
-            log.log(Level.CONFIG, e.getMessage());
+    private static void checkFillSettings(Properties settings) {
+        Map<String, String> mapSettingsDefault = getMapSettingsDefault();
+        for (Map.Entry<Object, Object> entry : settings.entrySet()) {
+            String key = String.valueOf(entry.getKey());
+            String value = String.valueOf(entry.getValue());
+            mapSettingsDefault.put(key, value);
         }
-        settings.putAll(mapSettings);
+        settings.putAll(mapSettingsDefault);
     }
 
-    private static String getDefaultSetting(String key) throws NotFoundSettingException {
+    private static Map<String, String> getMapSettingsDefault() {
+        Map<String, String> mapSettings = new LinkedHashMap<>();
+        for (String str : getListSettings()) {
+            try {
+                mapSettings.put(str, getStringSettingDefault(str));
+            } catch (NotFoundSettingException e) {
+                log.log(Level.CONFIG, e.getMessage());
+            }
+        }
+        return mapSettings;
+    }
+
+    private static List<String> getListSettings() {
+        List<String> list = new ArrayList<>();
+        list.add("width.size.window");
+        list.add("height.size.window");
+        list.add("width.position.window");
+        list.add("height.position.window");
+        list.add("path.1c");
+        list.add("path.base");
+        list.add("path.backup");
+        list.add("file.1c");
+        list.add("file.test");
+        list.add("file.backup");
+        list.add("last.date.unload_db");
+        return list;
+    }
+
+    private static String getStringSettingDefault(String key) throws NotFoundSettingException {
         switch (key) {
             case "width.size.window":
                 return "450";
@@ -145,9 +164,11 @@ public class Settings {
             case "height.position.window":
                 return "30";
             case "path.1c":
-                return getDefaultPath1c();
+                return getPath1cDefault();
             case "path.base":
                 return "C:\\base1c";
+            case "path.backup":
+                return "C:\\backup";
             case "file.1c":
                 return "1cv8.exe";
             case "file.test":
@@ -164,7 +185,7 @@ public class Settings {
         }
     }
 
-    private static String getDefaultPath1c() {
+    private static String getPath1cDefault() {
         String defaultPath = "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\";
         String[] masPath = new String[]{
                 "C:\\Program Files\\1cv82\\8.2.19.130\\bin\\",
