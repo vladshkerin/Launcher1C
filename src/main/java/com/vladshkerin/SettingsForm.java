@@ -1,11 +1,8 @@
 package com.vladshkerin;
 
-import com.vladshkerin.exception.NotFoundPropertyException;
+import com.vladshkerin.exception.NotFoundSettingException;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,8 +16,8 @@ public class SettingsForm extends JDialog {
 
     private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
 
-    private static final int WIDTH_WINDOW = 350;
-    private static final int HEIGHT_WINDOW = 300;
+    private static final int WIDTH_WINDOW = 400;
+    private static final int HEIGHT_WINDOW = 205;
 
     JLabel path1cLabel = new JLabel();
     JLabel pathBaseLabel = new JLabel();
@@ -32,7 +29,7 @@ public class SettingsForm extends JDialog {
     JButton closeButton = new JButton();
 
     public SettingsForm(JFrame parent) {
-        super(parent, Resource.getString("UpdateBaseForm"));
+        super(parent, Resource.getString("strTitleSettingForm"));
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -53,8 +50,8 @@ public class SettingsForm extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("")) {
-
+            if (e.getActionCommand().equals("closeButton")) {
+                dispose();
             }
         }
     }
@@ -68,15 +65,16 @@ public class SettingsForm extends JDialog {
     }
 
     private JPanel createGUI() {
-        path1cLabel.setText(Resource.getString("path1cLabel"));
-        pathBaseLabel.setText(Resource.getString("pathBaseLabel"));
-        pathBackupLabel.setText(Resource.getString("pathBackupLabel"));
+        // Settings objects
+        path1cLabel.setText(Resource.getString("path1cLabel") + ":");
+        pathBaseLabel.setText(Resource.getString("pathBaseLabel") + ":");
+        pathBackupLabel.setText(Resource.getString("pathBackupLabel") + ":");
 
         try {
-            path1cText.setText(Settings.getString("path1cText"));
-            pathBaseText.setText(Settings.getString("pathBaseText"));
-            pathBackupText.setText(Settings.getString("pathBackupText"));
-        } catch (NotFoundPropertyException e) {
+            path1cText.setText(Settings.getString("path.1c"));
+            pathBaseText.setText(Settings.getString("path.base"));
+            pathBackupText.setText(Settings.getString("path.backup"));
+        } catch (NotFoundSettingException e) {
             log.log(Level.CONFIG, e.getMessage());
         }
 
@@ -90,33 +88,19 @@ public class SettingsForm extends JDialog {
         saveButton.setText(Resource.getString("saveButton"));
         closeButton.setText(Resource.getString("CloseButton"));
 
+        // Layout objects on the form
         JPanel pMain = BoxLayoutUtils.createVerticalPanel();
         pMain.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
-        JPanel pPath1c = BoxLayoutUtils.createHorizontalPanel();
-        pPath1c.add(path1cLabel);
-        pPath1c.add(BoxLayoutUtils.createHorizontalStrut(4));
-        pPath1c.add(path1cText);
-
-        JPanel pBase = BoxLayoutUtils.createHorizontalPanel();
-        pBase.add(pathBaseLabel);
-        pBase.add(BoxLayoutUtils.createHorizontalStrut(4));
-        pBase.add(pathBaseText);
-
-        JPanel pBackup = BoxLayoutUtils.createHorizontalPanel();
-        pBackup.add(pathBackupLabel);
-        pBackup.add(BoxLayoutUtils.createHorizontalStrut(4));
-        pBackup.add(pathBackupText);
-
         JPanel pText = BoxLayoutUtils.createVerticalPanel();
-        pText.setBorder(new CompoundBorder(
-                new TitledBorder(Resource.getString("strTitleSettings")),
-                new EmptyBorder(4, 4, 4, 4)));
-        pText.add(pPath1c);
-        pText.add(BoxLayoutUtils.createVerticalStrut(4));
-        pText.add(pBase);
-        pText.add(BoxLayoutUtils.createVerticalStrut(4));
-        pText.add(pBackup);
+        pText.add(path1cLabel);
+        pText.add(path1cText);
+        pText.add(BoxLayoutUtils.createVerticalStrut(6));
+        pText.add(pathBaseLabel);
+        pText.add(pathBaseText);
+        pText.add(BoxLayoutUtils.createVerticalStrut(6));
+        pText.add(pathBackupLabel);
+        pText.add(pathBackupText);
 
         JPanel pButton = BoxLayoutUtils.createHorizontalPanel();
         pButton.add(BoxLayoutUtils.createHorizontalGlue());
@@ -124,9 +108,9 @@ public class SettingsForm extends JDialog {
         pButton.add(BoxLayoutUtils.createHorizontalStrut(6));
         pButton.add(closeButton);
 
-        GUITools.makeSameSize(path1cLabel, pathBaseLabel, pathBackupLabel);
-        GUITools.makeSameSize(path1cText, pathBaseText, pathBackupText);
         GUITools.makeSameSize(saveButton, closeButton);
+
+        BoxLayoutUtils.setGroupAlignmentY(Component.TOP_ALIGNMENT, pText, pButton, pMain);
 
         pMain.add(pText);
         pMain.add(BoxLayoutUtils.createHorizontalStrut(10));
