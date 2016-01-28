@@ -1,6 +1,5 @@
 package com.vladshkerin;
 
-import com.vladshkerin.exception.NotFoundPathException;
 import com.vladshkerin.exception.NotFoundSettingException;
 
 import javax.swing.*;
@@ -43,16 +42,6 @@ public class TaskPool implements Runnable {
 
     @Override
     public void run() {
-        try {
-            Command.checkDefaultPath();
-        } catch (NotFoundPathException e) {
-            JOptionPane.showMessageDialog(null,
-                    Resource.getString("strPathNotFound") + ":\n\"" + e.getMessage() + "\"",
-                    Resource.getString("ErrorForm"),
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
