@@ -277,9 +277,9 @@ public class MainForm extends JFrame {
                 mapSettings.put("height.size.window", String.valueOf((int) getSize().getHeight()));
                 mapSettings.put("width.position.window", String.valueOf(getX()));
                 mapSettings.put("height.position.window", String.valueOf(getY()));
-                Settings.setProperties(mapSettings);
+                Settings.setSettings(mapSettings);
                 try {
-                    Settings.storeProperties();
+                    Settings.storeSettings();
                 } catch (IOException e) {
                     log.log(Level.WARNING, e.getMessage());
                 }

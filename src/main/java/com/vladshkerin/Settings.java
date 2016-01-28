@@ -39,16 +39,16 @@ public class Settings {
         return properties.getProperty(key);
     }
 
-    public static void setProperties(Map<String, String> map) {
+    public static void setSettings(Map<String, String> map) {
         if (map.isEmpty()) return;
         properties.putAll(map);
     }
 
-    public static void setProperty(String key, String value) {
+    public static void setSetting(String key, String value) {
         properties.setProperty(key, value);
     }
 
-    public static void storeProperties() throws IOException {
+    public static void storeSettings() throws IOException {
         File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
         properties.store(new FileWriter(file), FILE_NAME_SETTINGS);
     }
@@ -122,7 +122,7 @@ public class Settings {
         mapSettings.put("height.size.window", "350");
         mapSettings.put("width.position.window", "30");
         mapSettings.put("height.position.window", "30");
-        mapSettings.put("path.1c", setDefaultPath1c());
+        mapSettings.put("path.1c", getDefaultPath1c());
         mapSettings.put("path.base", "C:\\base1c");
         mapSettings.put("path.backup", "C:\\backup");
         mapSettings.put("file.1c", "1cv8.exe");
@@ -135,7 +135,7 @@ public class Settings {
         properties.putAll(mapSettings);
     }
 
-    private static String setDefaultPath1c() {
+    private static String getDefaultPath1c() {
         String defaultPath = "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\";
         String[] masPath = new String[]{
                 "C:\\Program Files\\1cv82\\8.2.19.130\\bin\\",

@@ -61,9 +61,9 @@ public class TaskPool implements Runnable {
 
                 if (Operations.UNLOAD_DB.equals(operation)) {
                     try {
-                        Settings.setProperty("last.date.unload_db",
+                        Settings.setSetting("last.date.unload_db",
                                 new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
-                        Settings.storeProperties();
+                        Settings.storeSettings();
                     } catch (IOException e) {
                         //TODO empty
                     }
