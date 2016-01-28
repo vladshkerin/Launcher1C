@@ -7,6 +7,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,7 +41,6 @@ public class UpdateBaseForm extends JDialog {
         setPositionWindow();
 
         add(createGUI());
-        setVisible(true);
     }
 
     private void setPositionWindow() {
@@ -52,6 +52,19 @@ public class UpdateBaseForm extends JDialog {
     }
 
     public void runUpdateBase() {
+        ArrayList<String> errorList = (ArrayList<String>) Settings.checkPath(Operations.UNLOAD_DB);
+        if (!errorList.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String str : errorList) {
+                sb.append(str);
+            }
+            JOptionPane.showMessageDialog(null,
+                    Resource.getString("ErrorRunUpdateBase") + ".\n\n" + sb,
+                    Resource.getString("ErrorForm"),
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         TaskPool taskPool = new TaskPool();
         taskPool.setTextArea(textArea);
         taskPool.setProgressBar(progressBar);
