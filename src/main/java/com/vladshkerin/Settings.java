@@ -24,12 +24,21 @@ public class Settings {
 
     static {
         workPathProgram = new File("").getAbsolutePath();
-        File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
-        settings = getSettings(file);
+        initSettings();
     }
 
     private Settings() {
         // TODO empty
+    }
+
+    public static void initSettings() {
+        File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
+        settings = getSettings(file);
+    }
+
+    public static void storeSettings() throws IOException {
+        File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
+        settings.store(new FileWriter(file), FILE_NAME_SETTINGS);
     }
 
     public static String getString(String key) throws NotFoundSettingException {
@@ -47,11 +56,6 @@ public class Settings {
 
     public static void setSetting(String key, String value) {
         settings.setProperty(key, value);
-    }
-
-    public static void storeSettings() throws IOException {
-        File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
-        settings.store(new FileWriter(file), FILE_NAME_SETTINGS);
     }
 
     public static boolean checkPath(String path) {
