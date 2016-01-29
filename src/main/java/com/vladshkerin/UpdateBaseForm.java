@@ -19,7 +19,7 @@ public class UpdateBaseForm extends JDialog {
     private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
 
     private static final int WIDTH_WINDOW = 380;
-    private static final int HEIGHT_WINDOW = 230;
+    private static final int HEIGHT_WINDOW = 250;
 
     private final JTextArea textArea = new JTextArea();
     private JProgressBar progressBar = new JProgressBar();
@@ -120,7 +120,7 @@ public class UpdateBaseForm extends JDialog {
         GUITools.makeSameSize(stopButton, closeButton);
 
         pMain.add(pText);
-        pMain.add(BoxLayoutUtils.createHorizontalStrut(10));
+        pMain.add(BoxLayoutUtils.createVerticalStrut(4));
         pMain.add(pButton);
 
         return pMain;

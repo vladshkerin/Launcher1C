@@ -202,7 +202,7 @@ public class MainForm extends JFrame {
         pButton.add(settingButton);
         pButton.add(BoxLayoutUtils.createVerticalGlue());
         pButton.add(exitButton);
-        pButton.add(BoxLayoutUtils.createVerticalStrut(3));
+        pButton.add(BoxLayoutUtils.createVerticalStrut(2));
 
         GUITools.makeSameSize(enterpriseButton, configButton, updateButton,
                 checkButton, settingButton, exitButton);
