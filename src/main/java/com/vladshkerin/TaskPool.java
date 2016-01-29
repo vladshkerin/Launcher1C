@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class for consistent running of list of processes
+ * The class for consistent running of list of processes.
  */
 public class TaskPool implements Runnable {
 
@@ -119,7 +119,7 @@ public class TaskPool implements Runnable {
     }
 
     /**
-     * Class for to handle a separate process
+     * The class for to handle a separate process.
      */
     public class TaskWorker extends SwingWorker<Void, Void> {
 

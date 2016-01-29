@@ -1,7 +1,7 @@
 package com.vladshkerin;
 
 /**
- * Operations run the program 1C.
+ * Enum operations run the program 1C.
  */
 public enum Operations {
     ENTERPRISE,

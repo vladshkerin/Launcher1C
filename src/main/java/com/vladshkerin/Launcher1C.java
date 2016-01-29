@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.logging.LogManager;
 
 /**
- * Class starts the main form of the gui interface.
+ * The class starts the main form of the gui interface.
  *
  * @author Shkerin Vladimir Nikolaevich
  */

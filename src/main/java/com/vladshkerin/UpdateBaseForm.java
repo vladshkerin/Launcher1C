@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class form for update base 1C
+ * The form for update base 1C.
  */
 public class UpdateBaseForm extends JDialog {
 

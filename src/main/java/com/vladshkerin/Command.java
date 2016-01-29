@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class for creation, checking and receiving commands 1C
+ * The class for creation, checking and receiving commands 1C.
  */
 public class Command {
 

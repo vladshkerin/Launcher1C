@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class for program updates
+ * The form for program updates.
  */
 public class UpdateProgramForm extends JDialog {
 

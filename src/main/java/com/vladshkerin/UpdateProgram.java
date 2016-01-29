@@ -19,7 +19,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 /**
- * Class to the update program
+ * The class to the update program.
  */
 public class UpdateProgram {
 
