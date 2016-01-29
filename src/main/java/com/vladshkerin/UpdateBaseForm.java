@@ -43,14 +43,6 @@ public class UpdateBaseForm extends JDialog {
         add(createGUI());
     }
 
-    private void setPositionWindow() {
-        Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
-        int positionX = (int) ((dimScreen.getWidth() - WIDTH_WINDOW) / 2);
-        int positionY = (int) ((dimScreen.getHeight() - HEIGHT_WINDOW) / 2);
-
-        setLocation(positionX, positionY);
-    }
-
     public void runUpdateBase() {
         ArrayList<String> errorList = (ArrayList<String>) Settings.checkPath(Operations.UNLOAD_DB);
         if (!errorList.isEmpty()) {
@@ -82,6 +74,14 @@ public class UpdateBaseForm extends JDialog {
                 threadUpdateBase.interrupt();
             }
         }
+    }
+
+    private void setPositionWindow() {
+        Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
+        int positionX = (int) ((dimScreen.getWidth() - WIDTH_WINDOW) / 2);
+        int positionY = (int) ((dimScreen.getHeight() - HEIGHT_WINDOW) / 2);
+
+        setLocation(positionX, positionY);
     }
 
     private JPanel createGUI() {

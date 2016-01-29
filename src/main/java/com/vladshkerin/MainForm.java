@@ -159,10 +159,8 @@ public class MainForm extends JFrame {
         checkButton.setToolTipText(Resource.getString("strToolTipCheckButton"));
         settingButton.setToolTipText(Resource.getString("strToolTipSettingButton"));
 
-        for (int i = 1; i <= 10; i++) {
-            String name = "MAG_" + (i < 10 ? "0" + i : i);
-            listModel.addElement(name);
-        }
+        //TODO to finish
+        listModel.addElement("Ревизор");
 
         listBase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listBase.setSelectedIndex(0);
@@ -171,8 +169,12 @@ public class MainForm extends JFrame {
         listBase.addListSelectionListener(new SelectionListener());
         JScrollPane scrollPane = new JScrollPane(listBase);
 
-        String name = listModel.getElementAt(listBase.getSelectedIndex()).toString();
-        labelBase.setText("File=\"" + name + "\";");
+        try {
+//            String name = listModel.getElementAt(listBase.getSelectedIndex()).toString();
+            labelBase.setText("File=\"" + Settings.getString("path.base") + "\";");
+        } catch (NotFoundSettingException e) {
+            log.log(Level.CONFIG, e.getMessage());
+        }
         labelBase.setFont(Resource.getCurrentFont());
 
         // Layout objects on the form
