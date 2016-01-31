@@ -17,8 +17,8 @@ public class SettingsForm extends JDialog {
 
     private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
 
-    private static final int WIDTH_WINDOW = 400;
-    private static final int HEIGHT_WINDOW = 195;
+    private static final int WIDTH_WINDOW = 410;
+    private static final int HEIGHT_WINDOW = 210;
 
     private JLabel path1cLabel = new JLabel();
     private JLabel pathBaseLabel = new JLabel();
@@ -26,6 +26,9 @@ public class SettingsForm extends JDialog {
     private JTextField path1cText = new JTextField();
     private JTextField pathBaseText = new JTextField();
     private JTextField pathBackupText = new JTextField();
+    private JButton choicePath1cButton = new JButton();
+    private JButton choiceBaseButton = new JButton();
+    private JButton choiceBackupButton = new JButton();
     private JButton saveButton = new JButton();
     private JButton closeButton = new JButton();
 
@@ -41,6 +44,7 @@ public class SettingsForm extends JDialog {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());
         setSize(WIDTH_WINDOW, HEIGHT_WINDOW);
+        setMaximumSize(new Dimension(WIDTH_WINDOW, HEIGHT_WINDOW));
         setPositionWindow();
 
         Settings.initSettings();
@@ -100,12 +104,21 @@ public class SettingsForm extends JDialog {
         }
 
         ButtonListener buttonListener = new ButtonListener();
+        choicePath1cButton.addActionListener(buttonListener);
+        choiceBaseButton.addActionListener(buttonListener);
+        choiceBackupButton.addActionListener(buttonListener);
         saveButton.addActionListener(buttonListener);
         closeButton.addActionListener(buttonListener);
 
+        choicePath1cButton.setActionCommand("choicePath1cButton");
+        choiceBaseButton.setActionCommand("choiceBaseButton");
+        choiceBackupButton.setActionCommand("choiceBackupButton");
         saveButton.setActionCommand("saveButton");
         closeButton.setActionCommand("closeButton");
 
+        choicePath1cButton.setText("...");
+        choiceBaseButton.setText("...");
+        choiceBackupButton.setText("...");
         saveButton.setText(Resource.getString("saveButton"));
         closeButton.setText(Resource.getString("CloseButton"));
 
@@ -115,13 +128,22 @@ public class SettingsForm extends JDialog {
 
         JPanel pText = BoxLayoutUtils.createVerticalPanel();
         pText.add(path1cLabel);
-        pText.add(path1cText);
+        JPanel panel1 = BoxLayoutUtils.createHorizontalPanel();
+        panel1.add(path1cText);
+        panel1.add(choicePath1cButton);
+        pText.add(panel1);
         pText.add(BoxLayoutUtils.createVerticalStrut(6));
         pText.add(pathBaseLabel);
-        pText.add(pathBaseText);
+        JPanel panel2 = BoxLayoutUtils.createHorizontalPanel();
+        panel2.add(pathBaseText);
+        panel2.add(choiceBaseButton);
+        pText.add(panel2);
         pText.add(BoxLayoutUtils.createVerticalStrut(6));
         pText.add(pathBackupLabel);
-        pText.add(pathBackupText);
+        JPanel panel3 = BoxLayoutUtils.createHorizontalPanel();
+        panel3.add(pathBackupText);
+        panel3.add(choiceBackupButton);
+        pText.add(panel3);
 
         JPanel pButton = BoxLayoutUtils.createHorizontalPanel();
         pButton.add(BoxLayoutUtils.createHorizontalGlue());
