@@ -31,6 +31,7 @@ public class SettingsForm extends JDialog {
     private JButton choiceBackupButton = new JButton();
     private JButton saveButton = new JButton();
     private JButton closeButton = new JButton();
+    private JFileChooser fileChooser = new JFileChooser();
 
     public SettingsForm(JFrame parent) {
         super(parent, Resource.getString("strTitleSettingForm"));
@@ -56,7 +57,22 @@ public class SettingsForm extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("saveButton")) {
+            if (e.getActionCommand().equals("choicePath1cButton")) {
+                int res = fileChooser.showOpenDialog(SettingsForm.this);
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    path1cText.setText(fileChooser.getSelectedFile().getAbsolutePath());
+                }
+            } else if (e.getActionCommand().equals("choiceBaseButton")) {
+                int res = fileChooser.showOpenDialog(SettingsForm.this);
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    pathBaseText.setText(fileChooser.getSelectedFile().getAbsolutePath());
+                }
+            } else if (e.getActionCommand().equals("choiceBackupButton")) {
+                int res = fileChooser.showOpenDialog(SettingsForm.this);
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    pathBackupText.setText(fileChooser.getSelectedFile().getAbsolutePath());
+                }
+            } else if (e.getActionCommand().equals("saveButton")) {
                 saveSettings();
             } else if (e.getActionCommand().equals("closeButton")) {
                 dispose();
@@ -121,6 +137,10 @@ public class SettingsForm extends JDialog {
         choiceBackupButton.setText("...");
         saveButton.setText(Resource.getString("saveButton"));
         closeButton.setText(Resource.getString("CloseButton"));
+
+        //TODO set text
+        fileChooser.setDialogTitle("Выберите каталог");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         // Layout objects on the form
         JPanel pMain = BoxLayoutUtils.createVerticalPanel();
