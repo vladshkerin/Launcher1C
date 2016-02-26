@@ -2,12 +2,42 @@
 <Diagram>
   <ID>JAVA</ID>
   <OriginalElement />
-  <nodes />
+  <nodes>
+    <node x="6.0" y="79.0">com.vladshkerin.MainForm</node>
+    <node x="96.0" y="0.0">com.vladshkerin.UpdateProgram</node>
+    <node x="23.5" y="311.0">com.vladshkerin.TaskPool</node>
+    <node x="120.0" y="79.0">com.vladshkerin.UpdateProgramForm</node>
+    <node x="0.0" y="158.0">com.vladshkerin.Launcher1C</node>
+    <node x="17.5" y="232.0">com.vladshkerin.Operations</node>
+    <node x="0.0" y="390.0">com.vladshkerin.UpdateBaseForm</node>
+  </nodes>
   <notes />
-  <edges />
-  <settings layout="Hierarchic Group" zoom="1.0" x="0.0" y="0.0" />
+  <edges>
+    <edge source="com.vladshkerin.MainForm" target="com.vladshkerin.UpdateProgram">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.vladshkerin.Launcher1C" target="com.vladshkerin.MainForm">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.vladshkerin.TaskPool" target="com.vladshkerin.Operations">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.vladshkerin.UpdateProgramForm" target="com.vladshkerin.UpdateProgram">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.vladshkerin.UpdateBaseForm" target="com.vladshkerin.TaskPool">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="140.0" y="209.5" />
   <SelectedNodes />
   <Categories />
   <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
 </Diagram>
 
