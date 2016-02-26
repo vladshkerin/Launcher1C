@@ -45,7 +45,7 @@ public class SettingsForm extends JDialog {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());
         setSize(WIDTH_WINDOW, HEIGHT_WINDOW);
-        setMaximumSize(new Dimension(WIDTH_WINDOW, HEIGHT_WINDOW));
+//        setMaximumSize(new Dimension(WIDTH_WINDOW, HEIGHT_WINDOW));
         setPositionWindow();
 
         Settings.initSettings();
@@ -57,7 +57,11 @@ public class SettingsForm extends JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("choicePath1cButton")) {
+            if (e.getActionCommand().equals("saveButton")) {
+                saveSettings();
+            } else if (e.getActionCommand().equals("closeButton")) {
+                dispose();
+            } else if (e.getActionCommand().equals("choicePath1cButton")) {
                 int res = fileChooser.showOpenDialog(SettingsForm.this);
                 if (res == JFileChooser.APPROVE_OPTION) {
                     path1cText.setText(fileChooser.getSelectedFile().getAbsolutePath());
@@ -72,10 +76,6 @@ public class SettingsForm extends JDialog {
                 if (res == JFileChooser.APPROVE_OPTION) {
                     pathBackupText.setText(fileChooser.getSelectedFile().getAbsolutePath());
                 }
-            } else if (e.getActionCommand().equals("saveButton")) {
-                saveSettings();
-            } else if (e.getActionCommand().equals("closeButton")) {
-                dispose();
             }
         }
     }
