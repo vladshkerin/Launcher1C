@@ -48,7 +48,7 @@ public class SettingsForm extends JDialog {
 //        setMaximumSize(new Dimension(WIDTH_WINDOW, HEIGHT_WINDOW));
         setPositionWindow();
 
-        Settings.initSettings();
+//        Settings.initSettings();
 
         add(createGUI());
     }

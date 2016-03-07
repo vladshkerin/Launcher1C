@@ -18,8 +18,6 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -274,12 +272,10 @@ public class MainForm extends JFrame {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Map<String, String> mapSettings = new LinkedHashMap<>();
-                mapSettings.put("width.size.window", String.valueOf((int) getSize().getWidth()));
-                mapSettings.put("height.size.window", String.valueOf((int) getSize().getHeight()));
-                mapSettings.put("width.position.window", String.valueOf(getX()));
-                mapSettings.put("height.position.window", String.valueOf(getY()));
-                Settings.setSettings(mapSettings);
+                Settings.setSetting("width.size.window", String.valueOf((int) getSize().getWidth()));
+                Settings.setSetting("height.size.window", String.valueOf((int) getSize().getHeight()));
+                Settings.setSetting("width.position.window", String.valueOf(getX()));
+                Settings.setSetting("height.position.window", String.valueOf(getY()));
                 try {
                     Settings.storeSettings();
                 } catch (IOException e) {

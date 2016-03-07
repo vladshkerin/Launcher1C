@@ -3,13 +3,11 @@ package com.vladshkerin;
 import com.vladshkerin.exception.NotFoundSettingException;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class is used to get or set settings program.
@@ -18,40 +16,99 @@ public class Settings {
 
     private static final String FILE_NAME_SETTINGS = "settings.ini";
 
-    private static Logger log = Logger.getLogger(Settings.class.getName());
+    private static File propertiesFile;
     private static Properties settings;
-    private static String workPathProgram;
 
     static {
-        workPathProgram = new File("").getAbsolutePath();
-        initSettings();
+        String userDir = System.getProperty("user.home");
+        File propertiesDir = new File(userDir, ".launcher1c");
+        if (!propertiesDir.exists())
+            propertiesDir.mkdir();
+        propertiesFile = new File(propertiesDir, FILE_NAME_SETTINGS);
+
+        try {
+            initSettings();
+        } catch (IOException e) {
+            // empty
+        }
     }
 
     private Settings() {
         // TODO empty
     }
 
-    public static void initSettings() {
-        File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
-        settings = getSettings(file);
+    public static void initSettings() throws IOException {
+        Properties defaultSettings = getDefaultSettings();
+        settings = new Properties(defaultSettings);
+
+        if (propertiesFile.exists()) {
+            FileInputStream in = new FileInputStream(propertiesFile);
+            settings.load(in);
+        }
+    }
+
+    private static Properties getDefaultSettings() {
+        String strDateBackup = new SimpleDateFormat("MM_yyyy").format(System.currentTimeMillis());
+        Calendar calendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        String strDateUnload = new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
+
+        Properties defaultSettings = new Properties();
+        defaultSettings.put("width.size.window", "450");
+        defaultSettings.put("height.size.window", "350");
+        defaultSettings.put("width.position.window", "30");
+        defaultSettings.put("height.position.window", "30");
+        defaultSettings.put("path.1c", getPath1cDefault());
+        defaultSettings.put("path.base", "C:\\base1c");
+        defaultSettings.put("path.backup", "C:\\backup");
+        defaultSettings.put("file.1c", "1cv8.exe");
+        defaultSettings.put("file.test", "chdbfl.exe");
+        defaultSettings.put("file.backup", "base1c_" + strDateBackup);
+        defaultSettings.put("last.date.unload_db", strDateUnload);
+        return defaultSettings;
+    }
+
+    private static String getPath1cDefault() {
+        String defaultPath = "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\";
+        String[] masPath = new String[]{
+                "C:\\Program Files\\1cv82\\8.2.19.130\\bin\\",
+                "C:\\Program Files (x86)\\1cv82\\8.2.19.130\\bin\\",
+                "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\",
+                "C:\\Program Files (x86)\\1cv82\\8.2.19.90\\bin\\",
+                "C:\\Program Files\\1cv82\\8.2.19.83\\bin\\",
+                "C:\\Program Files (x86)\\1cv82\\8.2.19.83\\bin\\",
+                "C:\\Program Files\\1cv82\\8.2.19.76\\bin\\",
+                "C:\\Program Files (x86)\\1cv82\\8.2.19.76\\bin\\",
+                "C:\\Program Files\\1cv82\\8.2.18.109\\bin\\",
+                "C:\\Program Files (x86)\\1cv82\\8.2.18.109\\bin\\",
+                "C:\\Program Files\\1cv82\\8.2.17.169\\bin\\",
+                "C:\\Program Files (x86)\\1cv82\\8.2.17.169\\bin\\",
+                "C:\\Program Files\\1cv82\\8.2.16.362\\bin\\",
+                "C:\\Program Files (x86)\\1cv82\\8.2.16.362\\bin\\",
+                "C:\\Program Files\\1cv82\\8.2.15.294\\bin\\",
+                "C:\\Program Files (x86)\\1cv82\\8.2.15.294\\bin\\"
+        };
+
+        for (String path : masPath) {
+            if (new File(path).exists()) {
+                return path;
+            }
+        }
+
+        return defaultPath;
     }
 
     public static void storeSettings() throws IOException {
-        File file = new File(workPathProgram + File.separator + FILE_NAME_SETTINGS);
-        settings.store(new FileWriter(file), FILE_NAME_SETTINGS);
+        FileOutputStream out = new FileOutputStream(propertiesFile);
+        settings.store(out, "Program settings");
     }
 
     public static String getString(String key) throws NotFoundSettingException {
         String property = settings.getProperty(key);
         if (property == null) {
-            return getStringSettingDefault(key);
+            throw new NotFoundSettingException("settings \"" + key + "\" not found");
         }
         return property;
-    }
-
-    public static void setSettings(Map<String, String> map) {
-        if (map.isEmpty()) return;
-        settings.putAll(map);
     }
 
     public static void setSetting(String key, String value) {
@@ -95,127 +152,5 @@ public class Settings {
         }
 
         return errorList;
-    }
-
-    private static Properties getSettings(File file) {
-        Properties settings = new java.util.Properties();
-        try {
-            if (file.exists()) {
-                settings.load(new FileReader(file));
-                checkFillSettings(settings);
-            } else {
-                if (file.createNewFile()) {
-                    settings.putAll(getMapSettingsDefault());
-                    settings.store(new FileWriter(file), FILE_NAME_SETTINGS);
-                } else {
-                    throw new IOException();
-                }
-            }
-        } catch (IOException e) {
-            settings = new java.util.Properties();
-            log.log(Level.SEVERE, "Not found file settings: " + file.getAbsolutePath());
-        }
-
-        return settings;
-    }
-
-    private static void checkFillSettings(Properties settings) {
-        Map<String, String> mapSettingsDefault = getMapSettingsDefault();
-        for (Map.Entry<Object, Object> entry : settings.entrySet()) {
-            String key = String.valueOf(entry.getKey());
-            String value = String.valueOf(entry.getValue());
-            mapSettingsDefault.put(key, value);
-        }
-        settings.putAll(mapSettingsDefault);
-    }
-
-    private static Map<String, String> getMapSettingsDefault() {
-        Map<String, String> mapSettings = new LinkedHashMap<>();
-        for (String str : getListSettings()) {
-            try {
-                mapSettings.put(str, getStringSettingDefault(str));
-            } catch (NotFoundSettingException e) {
-                log.log(Level.CONFIG, e.getMessage());
-            }
-        }
-        return mapSettings;
-    }
-
-    private static List<String> getListSettings() {
-        List<String> list = new ArrayList<>();
-        list.add("width.size.window");
-        list.add("height.size.window");
-        list.add("width.position.window");
-        list.add("height.position.window");
-        list.add("path.1c");
-        list.add("path.base");
-        list.add("path.backup");
-        list.add("file.1c");
-        list.add("file.test");
-        list.add("file.backup");
-        list.add("last.date.unload_db");
-        return list;
-    }
-
-    private static String getStringSettingDefault(String key) throws NotFoundSettingException {
-        switch (key) {
-            case "width.size.window":
-                return "450";
-            case "height.size.window":
-                return "350";
-            case "width.position.window":
-                return "30";
-            case "height.position.window":
-                return "30";
-            case "path.1c":
-                return getPath1cDefault();
-            case "path.base":
-                return "C:\\base1c";
-            case "path.backup":
-                return "C:\\backup";
-            case "file.1c":
-                return "1cv8.exe";
-            case "file.test":
-                return "chdbfl.exe";
-            case "file.backup":
-                return "base1c_" +
-                        new SimpleDateFormat("MM_yyyy").format(System.currentTimeMillis());
-            case "last.date.unload_db":
-                Calendar calendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
-                calendar.add(Calendar.DAY_OF_YEAR, -7);
-                return new SimpleDateFormat("dd.MM.yyyy").format(calendar.getTime());
-            default:
-                throw new NotFoundSettingException("Not found property: " + key);
-        }
-    }
-
-    private static String getPath1cDefault() {
-        String defaultPath = "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\";
-        String[] masPath = new String[]{
-                "C:\\Program Files\\1cv82\\8.2.19.130\\bin\\",
-                "C:\\Program Files (x86)\\1cv82\\8.2.19.130\\bin\\",
-                "C:\\Program Files\\1cv82\\8.2.19.90\\bin\\",
-                "C:\\Program Files (x86)\\1cv82\\8.2.19.90\\bin\\",
-                "C:\\Program Files\\1cv82\\8.2.19.83\\bin\\",
-                "C:\\Program Files (x86)\\1cv82\\8.2.19.83\\bin\\",
-                "C:\\Program Files\\1cv82\\8.2.19.76\\bin\\",
-                "C:\\Program Files (x86)\\1cv82\\8.2.19.76\\bin\\",
-                "C:\\Program Files\\1cv82\\8.2.18.109\\bin\\",
-                "C:\\Program Files (x86)\\1cv82\\8.2.18.109\\bin\\",
-                "C:\\Program Files\\1cv82\\8.2.17.169\\bin\\",
-                "C:\\Program Files (x86)\\1cv82\\8.2.17.169\\bin\\",
-                "C:\\Program Files\\1cv82\\8.2.16.362\\bin\\",
-                "C:\\Program Files (x86)\\1cv82\\8.2.16.362\\bin\\",
-                "C:\\Program Files\\1cv82\\8.2.15.294\\bin\\",
-                "C:\\Program Files (x86)\\1cv82\\8.2.15.294\\bin\\"
-        };
-
-        for (String path : masPath) {
-            if (new File(path).exists()) {
-                return path;
-            }
-        }
-
-        return defaultPath;
     }
 }
