@@ -215,20 +215,6 @@ public class MainForm extends JFrame {
         return pMain;
     }
 
-    private JMenu createFileMenu() {
-
-        JMenu file = new JMenu(Resource.getString("FileButton"));
-
-        JMenuItem open = new JMenuItem(new UpdateAction());
-        JMenuItem exit = new JMenuItem(new ExitAction());
-
-        file.add(open);
-        file.addSeparator();
-        file.add(exit);
-
-        return file;
-    }
-
     private void setSizeWindow() {
         int widthWindow;
         int heightWindow;
