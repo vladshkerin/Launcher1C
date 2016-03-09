@@ -326,7 +326,7 @@ public class MainForm extends JFrame {
     }
 
     private boolean runProcessBuilder(Operations operations) {
-        ArrayList<String> errorList = (ArrayList<String>) Settings.checkPath(operations);
+        ArrayList<String> errorList = (ArrayList<String>) Path.checkPath(operations);
         if (!errorList.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (String str : errorList) {

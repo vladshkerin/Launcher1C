@@ -44,7 +44,7 @@ public class UpdateBaseForm extends JDialog {
     }
 
     public void runUpdateBase() {
-        ArrayList<String> errorList = (ArrayList<String>) Settings.checkPath(Operations.UNLOAD_DB);
+        ArrayList<String> errorList = (ArrayList<String>) Path.checkPath(Operations.UNLOAD_DB);
         if (!errorList.isEmpty()) {
             StringBuilder sb = new StringBuilder();
             for (String str : errorList) {
