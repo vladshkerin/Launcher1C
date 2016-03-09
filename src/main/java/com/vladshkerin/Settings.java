@@ -10,7 +10,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * This class is used to get or set settings program.
+ * Класс для параметров программы.
+ *
+ * @author  Vladimir Shkerin
  */
 public class Settings {
 
@@ -33,10 +35,18 @@ public class Settings {
         }
     }
 
+    /**
+     * Пустой конструктор.
+     */
     private Settings() {
         // TODO empty
     }
 
+    /**
+     * Инициализирует внутреннее поля.
+     *
+     * @throws  IOException если возникает ошибка чтения из потока
+     */
     public static void initSettings() throws IOException {
         Properties defaultSettings = getDefaultSettings();
         settings = new Properties(defaultSettings);
@@ -47,6 +57,11 @@ public class Settings {
         }
     }
 
+    /**
+     * Формирует и возвращает параметры приложения по умолчанию.
+     *
+     * @return  переменная типа Properties с установленными по умолчанию параметрами
+     */
     private static Properties getDefaultSettings() {
         String strDateBackup = new SimpleDateFormat("MM_yyyy").format(System.currentTimeMillis());
         Calendar calendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
@@ -68,11 +83,23 @@ public class Settings {
         return defaultSettings;
     }
 
+    /**
+     * Записывает параметры в выходной поток.
+     *
+     * @throws  IOException если возникает ошибка записи параметров в выходной поток
+     */
     public static void storeSettings() throws IOException {
         FileOutputStream out = new FileOutputStream(propertiesFile);
         settings.store(out, "Program settings");
     }
 
+    /**
+     * Возвращает строку параметра приложения.
+     *
+     * @param   key     ключ для поиска
+     * @return  строку с найденным параметром
+     * @throws  NotFoundSettingException если параметр не найден по ключу key
+     */
     public static String getString(String key) throws NotFoundSettingException {
         String property = settings.getProperty(key);
         if (property == null) {
@@ -81,6 +108,12 @@ public class Settings {
         return property;
     }
 
+    /**
+     * Устанавливает параметр приложения.
+     *
+     * @param   key     строковая переменная для установки ключа
+     * @param   value   значение параметра
+     */
     public static void setSetting(String key, String value) {
         settings.setProperty(key, value);
     }
