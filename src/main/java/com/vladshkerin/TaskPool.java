@@ -17,8 +17,10 @@ import java.util.logging.Logger;
  */
 public class TaskPool implements Runnable {
 
-    private static Logger log = Logger.getLogger(TaskPool.class.getName());
     private final Object object = new Object();
+
+    private static Logger log = Logger.getLogger(TaskPool.class.getName());
+    private static Settings settings = Property.getInstance();
 
     private Operations[] poolOperations;
     private JTextArea textArea;
@@ -61,9 +63,9 @@ public class TaskPool implements Runnable {
 
                 if (Operations.UNLOAD_DB.equals(operation)) {
                     try {
-                        Settings.setSetting("last.date.unload_db",
+                        settings.setSetting("last.date.unload_db",
                                 new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
-                        Settings.storeSettings();
+                        settings.storeSettings();
                     } catch (IOException e) {
                         //TODO empty
                     }
@@ -93,7 +95,7 @@ public class TaskPool implements Runnable {
         Calendar currentCalendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
         Calendar lastCalendar = GregorianCalendar.getInstance(Resource.getCurrentLocale());
         try {
-            String strLastDate = Settings.getString("last.date.unload_db");
+            String strLastDate = settings.getString("last.date.unload_db");
             SimpleDateFormat format = new SimpleDateFormat();
             format.applyPattern("dd.MM.yyyy");
             lastCalendar.setTime(format.parse(strLastDate));

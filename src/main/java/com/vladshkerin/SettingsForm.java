@@ -15,10 +15,11 @@ import java.util.logging.Logger;
  */
 public class SettingsForm extends JDialog {
 
-    private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
-
     private static final int WIDTH_WINDOW = 410;
     private static final int HEIGHT_WINDOW = 210;
+
+    private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
+    private static Settings settings = Property.getInstance();
 
     private JLabel path1cLabel = new JLabel();
     private JLabel pathBaseLabel = new JLabel();
@@ -45,10 +46,8 @@ public class SettingsForm extends JDialog {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());
         setSize(WIDTH_WINDOW, HEIGHT_WINDOW);
-//        setMaximumSize(new Dimension(WIDTH_WINDOW, HEIGHT_WINDOW));
+        setMaximumSize(new Dimension(WIDTH_WINDOW, HEIGHT_WINDOW));
         setPositionWindow();
-
-//        Settings.initSettings();
 
         add(createGUI());
     }
@@ -82,16 +81,16 @@ public class SettingsForm extends JDialog {
 
     private void saveSettings() {
         if (!path1cText.getText().isEmpty()) {
-            Settings.setSetting("path.1c", path1cText.getText());
+            settings.setSetting("path.1c", path1cText.getText());
         }
         if (!pathBaseText.getText().isEmpty()) {
-            Settings.setSetting("path.base", pathBaseText.getText());
+            settings.setSetting("path.base", pathBaseText.getText());
         }
         if (!pathBackupText.getText().isEmpty()) {
-            Settings.setSetting("path.backup", pathBackupText.getText());
+            settings.setSetting("path.backup", pathBackupText.getText());
         }
         try {
-            Settings.storeSettings();
+            settings.storeSettings();
         } catch (IOException e) {
             log.log(Level.CONFIG, e.getMessage());
         }
@@ -112,9 +111,9 @@ public class SettingsForm extends JDialog {
         pathBackupLabel.setText(Resource.getString("pathBackupLabel") + ":");
 
         try {
-            path1cText.setText(Settings.getString("path.1c"));
-            pathBaseText.setText(Settings.getString("path.base"));
-            pathBackupText.setText(Settings.getString("path.backup"));
+            path1cText.setText(settings.getString("path.1c"));
+            pathBaseText.setText(settings.getString("path.base"));
+            pathBackupText.setText(settings.getString("path.backup"));
         } catch (NotFoundSettingException e) {
             log.log(Level.CONFIG, e.getMessage());
         }

@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 public class MainForm extends JFrame {
 
     private static Logger log = Logger.getLogger(MainForm.class.getName());
+    private static Property settings = Property.getInstance();
 
     DefaultListModel listModel = new DefaultListModel();
 
@@ -169,7 +170,7 @@ public class MainForm extends JFrame {
 
         try {
 //            String name = listModel.getElementAt(listBase.getSelectedIndex()).toString();
-            labelBase.setText("File=\"" + Settings.getString("path.base") + "\";");
+            labelBase.setText("File=\"" + settings.getString("path.base") + "\";");
         } catch (NotFoundSettingException e) {
             log.log(Level.CONFIG, e.getMessage());
         }
@@ -219,9 +220,9 @@ public class MainForm extends JFrame {
         int widthWindow;
         int heightWindow;
         try {
-            widthWindow = Integer.parseInt(Settings.getString("width.size.window"));
+            widthWindow = Integer.parseInt(settings.getString("width.size.window"));
             widthWindow = (widthWindow < 400 ? 400 : widthWindow);
-            heightWindow = Integer.parseInt(Settings.getString("height.size.window"));
+            heightWindow = Integer.parseInt(settings.getString("height.size.window"));
             heightWindow = (heightWindow < 250 ? 250 : heightWindow);
         } catch (NotFoundSettingException | NumberFormatException e) {
             widthWindow = 450;
@@ -239,8 +240,8 @@ public class MainForm extends JFrame {
         int positionX;
         int positionY;
         try {
-            positionX = Integer.parseInt(Settings.getString("width.position.window"));
-            positionY = Integer.parseInt(Settings.getString("height.position.window"));
+            positionX = Integer.parseInt(settings.getString("width.position.window"));
+            positionY = Integer.parseInt(settings.getString("height.position.window"));
 
             if (positionX > dimScreen.getWidth() || positionY > dimScreen.getHeight()) {
                 throw new NotFoundSettingException("Loaded position of the window exceeds screen size");
@@ -258,12 +259,12 @@ public class MainForm extends JFrame {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Settings.setSetting("width.size.window", String.valueOf((int) getSize().getWidth()));
-                Settings.setSetting("height.size.window", String.valueOf((int) getSize().getHeight()));
-                Settings.setSetting("width.position.window", String.valueOf(getX()));
-                Settings.setSetting("height.position.window", String.valueOf(getY()));
+                settings.setSetting("width.size.window", String.valueOf((int) getSize().getWidth()));
+                settings.setSetting("height.size.window", String.valueOf((int) getSize().getHeight()));
+                settings.setSetting("width.position.window", String.valueOf(getX()));
+                settings.setSetting("height.position.window", String.valueOf(getY()));
                 try {
-                    Settings.storeSettings();
+                    settings.storeSettings();
                 } catch (IOException e) {
                     log.log(Level.WARNING, e.getMessage());
                 }

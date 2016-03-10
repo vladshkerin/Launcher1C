@@ -8,7 +8,7 @@ import java.util.ResourceBundle;
 /**
  * Класс для ресурсов программы.
  *
- * @author  Vladimir Shkerin
+ * @author Vladimir Shkerin
  */
 public class Resource {
 
@@ -39,8 +39,8 @@ public class Resource {
     /**
      * Возвращает строку ресурса.
      *
-     * @param   key     ключ для поиска ресурса
-     * @return  строка ресурса найденная по ключу key
+     * @param key ключ для поиска ресурса
+     * @return строка ресурса найденная по ключу key
      */
     public static String getString(String key) {
         if ("Application.version".equals(key)) {
@@ -53,7 +53,7 @@ public class Resource {
     /**
      * Возвращает текущую местность.
      *
-     * @return  переменная типа Local с текущей местностью
+     * @return переменная типа Local с текущей местностью
      */
     public static Locale getCurrentLocale() {
         return currentLocale;
@@ -62,7 +62,7 @@ public class Resource {
     /**
      * Возвращает текущий путь программы.
      *
-     * @return  строка с текущим путём программы.
+     * @return строка с текущим путём программы.
      */
     public static String getCurrentPath() {
         return currentPath;
@@ -71,7 +71,7 @@ public class Resource {
     /**
      * Возвращает текущий шрифт программы.
      *
-     * @return  переменная типа Font с текущим шрифтом программы.
+     * @return переменная типа Font с текущим шрифтом программы.
      */
     public static Font getCurrentFont() {
         return currentFont;

@@ -16,10 +16,11 @@ import java.util.logging.Logger;
  */
 public class UpdateBaseForm extends JDialog {
 
-    private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
-
     private static final int WIDTH_WINDOW = 380;
     private static final int HEIGHT_WINDOW = 250;
+
+    private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
+    private static Settings settings = Property.getInstance();
 
     private final JTextArea textArea = new JTextArea();
     private JProgressBar progressBar = new JProgressBar();
