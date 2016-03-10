@@ -15,8 +15,8 @@ import java.util.logging.Logger;
  */
 public class SettingsForm extends JDialog {
 
-    private static final int WIDTH_WINDOW = 410;
-    private static final int HEIGHT_WINDOW = 210;
+    private static final int WIDTH_WINDOW = 430;
+    private static final int HEIGHT_WINDOW = 220;
 
     private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
     private static Settings settings = Property.getInstance();
@@ -24,6 +24,7 @@ public class SettingsForm extends JDialog {
     private JLabel path1cLabel = new JLabel();
     private JLabel pathBaseLabel = new JLabel();
     private JLabel pathBackupLabel = new JLabel();
+    private JLabel radioButtonLabel = new JLabel();
     private JTextField path1cText = new JTextField();
     private JTextField pathBaseText = new JTextField();
     private JTextField pathBackupText = new JTextField();
@@ -32,6 +33,8 @@ public class SettingsForm extends JDialog {
     private JButton choiceBackupButton = new JButton();
     private JButton saveButton = new JButton();
     private JButton closeButton = new JButton();
+    private JRadioButton saveSettingsFileButton = new JRadioButton();
+    private JRadioButton saveSettingsRegisterButton = new JRadioButton();
     private JFileChooser fileChooser = new JFileChooser();
 
     public SettingsForm(JFrame parent) {
@@ -75,6 +78,14 @@ public class SettingsForm extends JDialog {
                 if (res == JFileChooser.APPROVE_OPTION) {
                     pathBackupText.setText(fileChooser.getSelectedFile().getAbsolutePath());
                 }
+            } else if (e.getActionCommand().equals("saveSettingsRegisterButton")) {
+                if (settings instanceof Property) {
+                    settings = Preference.getInstance();
+                }
+            } else if (e.getActionCommand().equals("saveSettingsFileButton")) {
+                if (settings instanceof Preference) {
+                    settings = Property.getInstance();
+                }
             }
         }
     }
@@ -105,10 +116,34 @@ public class SettingsForm extends JDialog {
     }
 
     private JPanel createGUI() {
-        // Settings objects
+        ButtonListener buttonListener = new ButtonListener();
+        choicePath1cButton.addActionListener(buttonListener);
+        choiceBaseButton.addActionListener(buttonListener);
+        choiceBackupButton.addActionListener(buttonListener);
+        saveButton.addActionListener(buttonListener);
+        closeButton.addActionListener(buttonListener);
+        saveSettingsRegisterButton.addActionListener(buttonListener);
+        saveSettingsFileButton.addActionListener(buttonListener);
+
+        choicePath1cButton.setActionCommand("choicePath1cButton");
+        choiceBaseButton.setActionCommand("choiceBaseButton");
+        choiceBackupButton.setActionCommand("choiceBackupButton");
+        saveButton.setActionCommand("saveButton");
+        closeButton.setActionCommand("closeButton");
+        saveSettingsRegisterButton.setActionCommand("saveSettingsRegisterButton");
+        saveSettingsFileButton.setActionCommand("saveSettingsFileButton");
+
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(saveSettingsFileButton);
+        bg.add(saveSettingsRegisterButton);
+
+        fileChooser.setDialogTitle(Resource.getString("selectDirectory"));
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
         path1cLabel.setText(Resource.getString("path1cLabel") + ":");
         pathBaseLabel.setText(Resource.getString("pathBaseLabel") + ":");
         pathBackupLabel.setText(Resource.getString("pathBackupLabel") + ":");
+        radioButtonLabel.setText(Resource.getString("strRadioButtonSettings") + ":");
 
         try {
             path1cText.setText(settings.getString("path.1c"));
@@ -118,34 +153,25 @@ public class SettingsForm extends JDialog {
             log.log(Level.CONFIG, e.getMessage());
         }
 
-        ButtonListener buttonListener = new ButtonListener();
-        choicePath1cButton.addActionListener(buttonListener);
-        choiceBaseButton.addActionListener(buttonListener);
-        choiceBackupButton.addActionListener(buttonListener);
-        saveButton.addActionListener(buttonListener);
-        closeButton.addActionListener(buttonListener);
-
-        choicePath1cButton.setActionCommand("choicePath1cButton");
-        choiceBaseButton.setActionCommand("choiceBaseButton");
-        choiceBackupButton.setActionCommand("choiceBackupButton");
-        saveButton.setActionCommand("saveButton");
-        closeButton.setActionCommand("closeButton");
-
         choicePath1cButton.setText("...");
         choiceBaseButton.setText("...");
         choiceBackupButton.setText("...");
+        saveSettingsFileButton.setText(Resource.getString("saveSettingsFileButton"));
+        saveSettingsRegisterButton.setText(Resource.getString("saveSettingsRegisterButton"));
         saveButton.setText(Resource.getString("saveButton"));
         closeButton.setText(Resource.getString("CloseButton"));
-
-        //TODO set text
-        fileChooser.setDialogTitle("Выберите каталог");
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
         // Layout objects on the form
         JPanel pMain = BoxLayoutUtils.createVerticalPanel();
         pMain.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
 
         JPanel pText = BoxLayoutUtils.createVerticalPanel();
+//        JPanel panel = BoxLayoutUtils.createHorizontalPanel();
+//        panel.add(radioButtonLabel);
+//        panel.add(saveSettingsRegisterButton);
+//        panel.add(saveSettingsFileButton);
+//        pText.add(panel);
+        pText.add(BoxLayoutUtils.createVerticalStrut(6));
         pText.add(path1cLabel);
         JPanel panel1 = BoxLayoutUtils.createHorizontalPanel();
         panel1.add(path1cText);

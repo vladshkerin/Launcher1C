@@ -77,8 +77,8 @@ public class Property implements Settings {
         defProperty.put("width.position.window", "30");
         defProperty.put("height.position.window", "30");
         defProperty.put("path.1c", Path.getPath1cDefault());
-        defProperty.put("path.base", "C:\\base1c");
-        defProperty.put("path.backup", "C:\\backup");
+        defProperty.put("path.base", "C:\\base1c\\");
+        defProperty.put("path.backup", "C:\\backup\\");
         defProperty.put("file.1c", "1cv8.exe");
         defProperty.put("file.test", "chdbfl.exe");
         defProperty.put("file.backup", "base1c_" + strDateBackup);

@@ -55,8 +55,8 @@ public class Preference implements Settings {
         defNode.put("width.position.window", "30");
         defNode.put("height.position.window", "30");
         defNode.put("path.1c", Path.getPath1cDefault());
-        defNode.put("path.base", "C:\\base1c");
-        defNode.put("path.backup", "C:\\backup");
+        defNode.put("path.base", "C:\\base1c\\");
+        defNode.put("path.backup", "C:\\backup\\");
         defNode.put("file.1c", "1cv8.exe");
         defNode.put("file.test", "chdbfl.exe");
         defNode.put("file.backup", "base1c_" + strDateBackup);
