@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class MainForm extends JFrame {
 
     private static Logger log = Logger.getLogger(MainForm.class.getName());
-    private static Property settings = Property.getInstance();
+    private static Settings settings = Preference.getInstance();
 
     DefaultListModel listModel = new DefaultListModel();
 
