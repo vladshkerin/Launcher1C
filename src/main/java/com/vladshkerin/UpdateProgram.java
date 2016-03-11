@@ -25,7 +25,7 @@ public class UpdateProgram {
 
     private final FTPClient FTP;
 
-    private static Logger log = Logger.getLogger(UpdateProgram.class.getName());
+    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
 
     private String nameFile = "Launcher1C";
     private String extensionFile = "zip";
@@ -83,16 +83,16 @@ public class UpdateProgram {
             }
 
         } catch (FTPConnectionClosedException e) {
-            log.log(Level.SEVERE, "FTP server closed connection: " + e.getMessage());
+            logger.log(Level.FINE, "FTP server closed connection: " + e.getMessage());
         } catch (IOException e) {
-            log.log(Level.SEVERE, "FTP error IO: " + e.getMessage());
+            logger.log(Level.FINE, "FTP error IO: " + e.getMessage());
         } finally {
             if (FTP.isConnected()) {
                 try {
                     logoutFTP();
                     FTP.disconnect();
                 } catch (IOException f) {
-                    log.log(Level.SEVERE, "FTP error disconnect: " + f.getMessage());
+                    logger.log(Level.FINE, "FTP error disconnect: " + f.getMessage());
                 }
             }
         }
@@ -127,16 +127,16 @@ public class UpdateProgram {
                 }
             }
         } catch (FTPConnectionClosedException e) {
-            log.log(Level.SEVERE, "FTP server closed connection: " + e.getMessage());
+            logger.log(Level.FINE, "FTP server closed connection: " + e.getMessage());
         } catch (IOException e) {
-            log.log(Level.SEVERE, "FTP error IO: " + e.getMessage());
+            logger.log(Level.FINE, "FTP error IO: " + e.getMessage());
         } finally {
             if (FTP.isConnected()) {
                 try {
                     logoutFTP();
                     FTP.disconnect();
                 } catch (IOException f) {
-                    log.log(Level.SEVERE, "FTP error disconnect: " + f.getMessage());
+                    logger.log(Level.FINE, "FTP error disconnect: " + f.getMessage());
                 }
             }
         }

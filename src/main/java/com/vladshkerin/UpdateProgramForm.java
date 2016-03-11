@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  */
 public class UpdateProgramForm extends JDialog {
 
-    private static Logger log = Logger.getLogger(UpdateProgramForm.class.getName());
+    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
 
     private static final int WIDTH_WINDOW = 500;
     private static final int HEIGHT_WINDOW = 100;
@@ -31,7 +31,7 @@ public class UpdateProgramForm extends JDialog {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            log.log(Level.WARNING, "Error set look and feel in update form.");
+            logger.log(Level.FINE, "Error set look and feel in update form.");
         }
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());

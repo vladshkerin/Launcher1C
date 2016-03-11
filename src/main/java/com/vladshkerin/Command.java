@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  */
 public class Command {
 
-    private static Logger log = Logger.getLogger(Settings.class.getName());
+    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static String lang = Resource.getCurrentLocale().getLanguage();
     private static Settings settings = Property.getInstance();
 
@@ -99,7 +99,7 @@ public class Command {
                     };
             }
         } catch (NotFoundSettingException e) {
-            log.log(Level.CONFIG, e.getMessage());
+            logger.log(Level.CONFIG, e.getMessage());
         }
         return cmd;
     }

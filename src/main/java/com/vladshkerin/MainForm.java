@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class MainForm extends JFrame {
 
-    private static Logger log = Logger.getLogger(MainForm.class.getName());
+    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Preference.getInstance();
 
     DefaultListModel listModel = new DefaultListModel();
@@ -46,7 +46,7 @@ public class MainForm extends JFrame {
             URL imageResource = Launcher1C.class.getResource("/images/ariant.png");
             setIconImage(ImageIO.read(imageResource));
         } catch (Exception e) {
-            log.log(Level.WARNING, "Error set look and feel in main form");
+            logger.log(Level.FINE, "Error set look and feel in main form");
         }
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -172,7 +172,7 @@ public class MainForm extends JFrame {
 //            String name = listModel.getElementAt(listBase.getSelectedIndex()).toString();
             labelBase.setText("File=\"" + settings.getString("path.base") + "\";");
         } catch (NotFoundSettingException e) {
-            log.log(Level.CONFIG, e.getMessage());
+            logger.log(Level.CONFIG, e.getMessage());
         }
         labelBase.setFont(Resource.getCurrentFont());
 
@@ -227,7 +227,7 @@ public class MainForm extends JFrame {
         } catch (NotFoundSettingException | NumberFormatException e) {
             widthWindow = 450;
             heightWindow = 300;
-            log.log(Level.WARNING, e.getMessage());
+            logger.log(Level.FINE, e.getMessage());
         }
         setSize(widthWindow, heightWindow);
     }
@@ -249,7 +249,7 @@ public class MainForm extends JFrame {
         } catch (NotFoundSettingException | NumberFormatException e) {
             positionX = defPositionX;
             positionY = defPositionY;
-            log.log(Level.WARNING, e.getMessage());
+            logger.log(Level.FINE, e.getMessage());
         }
 
         setLocation(positionX, positionY);
@@ -266,7 +266,7 @@ public class MainForm extends JFrame {
                 try {
                     settings.storeSettings();
                 } catch (IOException e) {
-                    log.log(Level.WARNING, e.getMessage());
+                    logger.log(Level.CONFIG, e.getMessage());
                 }
                 System.exit(0);
             }
@@ -318,7 +318,7 @@ public class MainForm extends JFrame {
                         }
                     }
                 } catch (FTPException e) {
-                    log.log(Level.SEVERE, e.getMessage());
+                    logger.log(Level.FINE, e.getMessage());
                 }
             }
         });
@@ -345,7 +345,7 @@ public class MainForm extends JFrame {
             process.start();
             return true;
         } catch (ArrayIndexOutOfBoundsException | SecurityException | IOException e) {
-            log.log(Level.SEVERE, e.getMessage());
+            logger.log(Level.FINE, e.getMessage());
             return false;
         }
     }

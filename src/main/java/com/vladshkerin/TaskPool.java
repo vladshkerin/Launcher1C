@@ -19,7 +19,7 @@ public class TaskPool implements Runnable {
 
     private final Object object = new Object();
 
-    private static Logger log = Logger.getLogger(TaskPool.class.getName());
+    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Property.getInstance();
 
     private Operations[] poolOperations;
@@ -67,11 +67,11 @@ public class TaskPool implements Runnable {
                                 new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
                         settings.storeSettings();
                     } catch (IOException e) {
-                        //TODO empty
+                        logger.log(Level.FINE, e.getMessage());
                     }
                 }
             } catch (InterruptedException e) {
-                log.log(Level.WARNING, "interrupted pool operations.");
+                logger.log(Level.FINE, "interrupted pool operations.");
                 break;
             }
         }
@@ -102,7 +102,7 @@ public class TaskPool implements Runnable {
             lastCalendar.add(Calendar.DAY_OF_YEAR, 7);
         } catch (NotFoundSettingException | ParseException e) {
             lastCalendar = currentCalendar;
-            log.log(Level.WARNING, e.getMessage());
+            logger.log(Level.FINE, e.getMessage());
         }
 
         if (lastCalendar.compareTo(currentCalendar) <= 0) {
@@ -147,7 +147,7 @@ public class TaskPool implements Runnable {
                         e.getMessage(),
                         Resource.getString("ErrorForm"),
                         JOptionPane.ERROR_MESSAGE);
-                log.log(Level.SEVERE, e.getMessage());
+                logger.log(Level.FINE, e.getMessage());
             }
 
             return null;

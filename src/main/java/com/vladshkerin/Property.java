@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Класс для сохранения и восстановления параметров программы из файла.
@@ -19,6 +21,8 @@ import java.util.Properties;
 public class Property implements Settings {
 
     private static final Property INSTANCE;
+
+    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
 
     private static Properties properties;
     private static File propertiesFile;
@@ -38,7 +42,7 @@ public class Property implements Settings {
                 in = new FileInputStream(propertiesFile);
                 properties.load(in);
             } catch (IOException e) {
-                // TODO empty
+                logger.log(Level.FINE, e.getMessage());
             }
         }
     }

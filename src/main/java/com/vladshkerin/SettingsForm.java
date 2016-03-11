@@ -18,7 +18,7 @@ public class SettingsForm extends JDialog {
     private static final int WIDTH_WINDOW = 430;
     private static final int HEIGHT_WINDOW = 220;
 
-    private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
+    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Property.getInstance();
 
     private JLabel path1cLabel = new JLabel();
@@ -43,7 +43,7 @@ public class SettingsForm extends JDialog {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            log.log(Level.WARNING, "Error set look and feel in update base form.");
+            logger.log(Level.FINE, "Error set look and feel in update base form.");
         }
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -103,7 +103,7 @@ public class SettingsForm extends JDialog {
         try {
             settings.storeSettings();
         } catch (IOException e) {
-            log.log(Level.CONFIG, e.getMessage());
+            logger.log(Level.CONFIG, e.getMessage());
         }
     }
 
@@ -150,7 +150,7 @@ public class SettingsForm extends JDialog {
             pathBaseText.setText(settings.getString("path.base"));
             pathBackupText.setText(settings.getString("path.backup"));
         } catch (NotFoundSettingException e) {
-            log.log(Level.CONFIG, e.getMessage());
+            logger.log(Level.CONFIG, e.getMessage());
         }
 
         choicePath1cButton.setText("...");

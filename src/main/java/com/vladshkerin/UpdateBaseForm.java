@@ -19,7 +19,7 @@ public class UpdateBaseForm extends JDialog {
     private static final int WIDTH_WINDOW = 380;
     private static final int HEIGHT_WINDOW = 250;
 
-    private static Logger log = Logger.getLogger(UpdateBaseForm.class.getName());
+    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Property.getInstance();
 
     private final JTextArea textArea = new JTextArea();
@@ -34,7 +34,7 @@ public class UpdateBaseForm extends JDialog {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            log.log(Level.WARNING, "Error set look and feel in update base form.");
+            logger.log(Level.FINE, "Error set look and feel in update base form.");
         }
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocale(Resource.getCurrentLocale());
