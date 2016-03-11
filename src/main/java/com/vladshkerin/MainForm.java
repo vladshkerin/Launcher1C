@@ -158,8 +158,8 @@ public class MainForm extends JFrame {
         checkButton.setToolTipText(Resource.getString("strToolTipCheckButton"));
         settingButton.setToolTipText(Resource.getString("strToolTipSettingButton"));
 
-        //TODO to finish
-        listModel.addElement("Ревизор");
+        //TODO change to auto filling list base
+        listModel.addElement(Resource.getString("strAuditor"));
 
         listBase.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listBase.setSelectedIndex(0);
