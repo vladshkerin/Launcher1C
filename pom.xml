@@ -23,6 +23,12 @@
             <artifactId>commons-net</artifactId>
             <version>3.4</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -86,7 +92,7 @@
                                 <fileVersion>${project.version}.0</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Программа для запуска и обновления 1С</fileDescription>
-                                <copyright>Copyright  2016 ${product.company}</copyright>
+                                <copyright>Copyright 2016 ${product.company}</copyright>
                                 <productVersion>${project.version}.0</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <companyName>${product.company}</companyName>
