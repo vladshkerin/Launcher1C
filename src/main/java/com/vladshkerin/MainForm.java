@@ -216,6 +216,19 @@ public class MainForm extends JFrame {
         return pMain;
     }
 
+    /**
+     * Adds a button to a container.
+     *
+     * @param c        the container
+     * @param title    the button title
+     * @param listener the action listener for the button
+     */
+    public void addButton(Container c, String title, ActionListener listener) {
+        JButton button = new JButton(title);
+        c.add(button);
+        button.addActionListener(listener);
+    }
+
     private void setSizeWindow() {
         int widthWindow;
         int heightWindow;
@@ -256,6 +269,7 @@ public class MainForm extends JFrame {
     }
 
     private void runSaveSettingsAndExit() {
+        setVisible(false);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -271,9 +285,7 @@ public class MainForm extends JFrame {
                 System.exit(0);
             }
         });
-        t.setDaemon(true);
         t.start();
-        setVisible(false);
     }
 
     private void runCheckUpdate() {
