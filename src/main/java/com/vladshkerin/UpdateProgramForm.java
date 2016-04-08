@@ -43,6 +43,43 @@ public class UpdateProgramForm extends JDialog {
         updateProgram = new UpdateProgram();
     }
 
+    private JPanel createGUI() {
+        updateButton = new JButton(Resource.getString("UpdateButton"));
+        closeButton = new JButton(Resource.getString("CloseButton"));
+        textLabel = new JLabel(Resource.getString("strCheckVersionUpdate") + "...");
+
+        ButtonListener buttonListener = new ButtonListener();
+        updateButton.addActionListener(buttonListener);
+        closeButton.addActionListener(buttonListener);
+
+        updateButton.setVisible(false);
+
+        JPanel gridText = new JPanel(new GridLayout(1, 1, 5, 0));
+        gridText.add(textLabel);
+
+        JPanel gridButton = new JPanel(new GridLayout(1, 2, 5, 0));
+        gridButton.add(updateButton);
+        gridButton.add(closeButton);
+
+        JPanel flow = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        flow.add(gridButton);
+
+        JPanel main = new JPanel(new GridLayout(2, 1, 5, 0));
+        main.add(gridText, BorderLayout.NORTH);
+        main.add(flow, BorderLayout.SOUTH);
+
+        return main;
+    }
+
+    private void setTextLabel(final String text) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                textLabel.setText(text);
+            }
+        });
+    }
+
     public void runCheckUpdate() {
         setTextLabel(Resource.getString("strWaitVersionUpdate") + "...");
 
@@ -110,6 +147,10 @@ public class UpdateProgramForm extends JDialog {
         t.start();
     }
 
+    /************************************************
+     *              Event listeners                 *
+     ************************************************/
+
     public class ButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -120,42 +161,5 @@ public class UpdateProgramForm extends JDialog {
                 dispose();
             }
         }
-    }
-
-    private JPanel createGUI() {
-        updateButton = new JButton(Resource.getString("UpdateButton"));
-        closeButton = new JButton(Resource.getString("CloseButton"));
-        textLabel = new JLabel(Resource.getString("strCheckVersionUpdate") + "...");
-
-        ButtonListener buttonListener = new ButtonListener();
-        updateButton.addActionListener(buttonListener);
-        closeButton.addActionListener(buttonListener);
-
-        updateButton.setVisible(false);
-
-        JPanel gridText = new JPanel(new GridLayout(1, 1, 5, 0));
-        gridText.add(textLabel);
-
-        JPanel gridButton = new JPanel(new GridLayout(1, 2, 5, 0));
-        gridButton.add(updateButton);
-        gridButton.add(closeButton);
-
-        JPanel flow = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        flow.add(gridButton);
-
-        JPanel main = new JPanel(new GridLayout(2, 1, 5, 0));
-        main.add(gridText, BorderLayout.NORTH);
-        main.add(flow, BorderLayout.SOUTH);
-
-        return main;
-    }
-
-    private void setTextLabel(final String text) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                textLabel.setText(text);
-            }
-        });
     }
 }

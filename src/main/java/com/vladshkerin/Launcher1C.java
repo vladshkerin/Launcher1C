@@ -26,7 +26,8 @@ public class Launcher1C {
             @Override
             public void run() {
                 MainForm form = new MainForm();
-                form.setTitle(Resource.getString("MainForm"));
+                form.setTitle(Resource.getString("MainForm") +
+                                "   v" + Resource.getString("Application.version"));
                 form.setVisible(true);
             }
         });

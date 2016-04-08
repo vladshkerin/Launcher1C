@@ -16,8 +16,8 @@ import java.util.logging.Logger;
  */
 public class UpdateBaseForm extends JDialog {
 
-    private static final int WIDTH_WINDOW = 380;
-    private static final int HEIGHT_WINDOW = 250;
+    private static final int WIDTH_WINDOW = 400;
+    private static final int HEIGHT_WINDOW = 270;
 
     private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Property.getInstance();
@@ -42,39 +42,6 @@ public class UpdateBaseForm extends JDialog {
         setPositionWindow();
 
         add(createGUI());
-    }
-
-    public void runUpdateBase() {
-        ArrayList<String> errorList = (ArrayList<String>) Path.checkPath(Operations.UNLOAD_DB);
-        if (!errorList.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            for (String str : errorList) {
-                sb.append(str);
-            }
-            JOptionPane.showMessageDialog(null,
-                    Resource.getString("ErrorRunUpdateBase") + ".\n\n" + sb,
-                    Resource.getString("ErrorForm"),
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        TaskPool taskPool = new TaskPool();
-        taskPool.setTextArea(textArea);
-        taskPool.setProgressBar(progressBar);
-        threadUpdateBase = new Thread(taskPool);
-        threadUpdateBase.start();
-    }
-
-    public class ButtonListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("closeButton")) {
-                dispose();
-            } else if (e.getActionCommand().equals("stopButton")) {
-                threadUpdateBase.interrupt();
-            }
-        }
     }
 
     private void setPositionWindow() {
@@ -125,5 +92,44 @@ public class UpdateBaseForm extends JDialog {
         pMain.add(pButton);
 
         return pMain;
+    }
+
+    public void runUpdateBase() {
+        ArrayList<String> errorList = (ArrayList<String>) Path.checkPath(Operations.UNLOAD_DB);
+        if (!errorList.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String str : errorList) {
+                sb.append(str);
+            }
+            JOptionPane.showMessageDialog(null,
+                    Resource.getString("ErrorRunUpdateBase") + ".\n\n" + sb,
+                    Resource.getString("ErrorForm"),
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        TaskPool taskPool = new TaskPool();
+        taskPool.setTextArea(textArea);
+        taskPool.setProgressBar(progressBar);
+        threadUpdateBase = new Thread(taskPool);
+        threadUpdateBase.start();
+    }
+
+    /************************************************
+     *              Event listeners                 *
+     ************************************************/
+
+    public class ButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("closeButton")) {
+                dispose();
+            } else if (e.getActionCommand().equals("stopButton")) {
+                if (threadUpdateBase != null)
+                    threadUpdateBase.interrupt();
+            }
+        }
+
     }
 }

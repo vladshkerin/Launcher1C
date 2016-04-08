@@ -144,7 +144,7 @@ public class UpdateProgram {
         return false;
     }
 
-    public void unZip(String path, String dir_to) throws IOException {
+    private void unZip(String path, String dir_to) throws IOException {
         ZipFile zip = new ZipFile(path);
         Enumeration entries = zip.entries();
         LinkedList<ZipEntry> zfiles = new LinkedList<>();
