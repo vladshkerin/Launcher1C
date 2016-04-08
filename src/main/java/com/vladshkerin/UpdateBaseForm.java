@@ -16,8 +16,8 @@ import java.util.logging.Logger;
  */
 public class UpdateBaseForm extends JDialog {
 
-    private static final int WIDTH_WINDOW = 380;
-    private static final int HEIGHT_WINDOW = 250;
+    private static final int WIDTH_WINDOW = 400;
+    private static final int HEIGHT_WINDOW = 270;
 
     private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Property.getInstance();

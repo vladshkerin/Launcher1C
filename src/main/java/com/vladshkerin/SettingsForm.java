@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class SettingsForm extends JDialog {
 
     private static final int WIDTH_WINDOW = 430;
-    private static final int HEIGHT_WINDOW = 220;
+    private static final int HEIGHT_WINDOW = 205;
 
     private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Property.getInstance();
