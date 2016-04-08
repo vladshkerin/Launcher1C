@@ -72,7 +72,8 @@ public class UpdateBaseForm extends JDialog {
             if (e.getActionCommand().equals("closeButton")) {
                 dispose();
             } else if (e.getActionCommand().equals("stopButton")) {
-                threadUpdateBase.interrupt();
+                if (threadUpdateBase != null)
+                    threadUpdateBase.interrupt();
             }
         }
     }

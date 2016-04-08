@@ -29,7 +29,7 @@ public class MainForm extends JFrame {
     private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Preference.getInstance();
 
-    DefaultListModel listModel = new DefaultListModel();
+    private DefaultListModel listModel = new DefaultListModel();
 
     private JList listBase = new JList(listModel);
     private JLabel labelBase = new JLabel();
@@ -59,70 +59,43 @@ public class MainForm extends JFrame {
         runCheckUpdate();
     }
 
-    protected class WindowListener extends WindowAdapter {
-
-        @Override
-        public void windowClosing(WindowEvent event) {
-            runSaveSettingsAndExit();
+    private void setSizeWindow() {
+        int widthWindow;
+        int heightWindow;
+        try {
+            widthWindow = Integer.parseInt(settings.getString("width.size.window"));
+            widthWindow = (widthWindow < 400 ? 400 : widthWindow);
+            heightWindow = Integer.parseInt(settings.getString("height.size.window"));
+            heightWindow = (heightWindow < 250 ? 250 : heightWindow);
+        } catch (NotFoundSettingException | NumberFormatException e) {
+            widthWindow = 450;
+            heightWindow = 300;
+            logger.log(Level.FINE, e.getMessage());
         }
+        setSize(widthWindow, heightWindow);
     }
 
-    protected class ButtonListener implements ActionListener {
+    private void setPositionWindow() {
+        Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
+        int defPositionX = (int) ((dimScreen.getWidth() - getWidth()) / 2);
+        int defPositionY = (int) ((dimScreen.getHeight() - getHeight()) / 2);
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("enterpriseButton")) {
-                if (runProcessBuilder(Operations.ENTERPRISE)) {
-                    runSaveSettingsAndExit();
-                }
-            } else if (e.getActionCommand().equals("configButton")) {
-                if (runProcessBuilder(Operations.CONFIG)) {
-                    runSaveSettingsAndExit();
-                }
-            } else if (e.getActionCommand().equals("updateButton")) {
-                UpdateBaseForm form = new UpdateBaseForm(MainForm.this);
-                form.setVisible(true);
-                form.runUpdateBase();
-            } else if (e.getActionCommand().equals("checkButton")) {
-                runProcessBuilder(Operations.CHECK);
-            } else if (e.getActionCommand().equals("settingButton")) {
-                SettingsForm form = new SettingsForm(MainForm.this);
-                form.setVisible(true);
+        int positionX;
+        int positionY;
+        try {
+            positionX = Integer.parseInt(settings.getString("width.position.window"));
+            positionY = Integer.parseInt(settings.getString("height.position.window"));
+
+            if (positionX > dimScreen.getWidth() || positionY > dimScreen.getHeight()) {
+                throw new NotFoundSettingException("Loaded position of the window exceeds screen size");
             }
-        }
-    }
-
-    protected class SelectionListener implements ListSelectionListener {
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            int selected = ((JList) e.getSource()).getSelectedIndex();
-            String name = listModel.getElementAt(selected).toString();
-            labelBase.setText("File=\"" + name + "\";");
-        }
-    }
-
-    protected class UpdateAction extends AbstractAction {
-
-        UpdateAction() {
-            putValue(NAME, Resource.getString("CheckUpdateButton"));
+        } catch (NotFoundSettingException | NumberFormatException e) {
+            positionX = defPositionX;
+            positionY = defPositionY;
+            logger.log(Level.FINE, e.getMessage());
         }
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            new UpdateProgramForm(MainForm.this);
-        }
-    }
-
-    protected class ExitAction extends AbstractAction {
-
-        ExitAction() {
-            putValue(NAME, Resource.getString("ExitButton"));
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            runSaveSettingsAndExit();
-        }
+        setLocation(positionX, positionY);
     }
 
     private JPanel createGUI() {
@@ -216,78 +189,6 @@ public class MainForm extends JFrame {
         return pMain;
     }
 
-    /**
-     * Adds a button to a container.
-     *
-     * @param c        the container
-     * @param title    the button title
-     * @param listener the action listener for the button
-     */
-    public void addButton(Container c, String title, ActionListener listener) {
-        JButton button = new JButton(title);
-        c.add(button);
-        button.addActionListener(listener);
-    }
-
-    private void setSizeWindow() {
-        int widthWindow;
-        int heightWindow;
-        try {
-            widthWindow = Integer.parseInt(settings.getString("width.size.window"));
-            widthWindow = (widthWindow < 400 ? 400 : widthWindow);
-            heightWindow = Integer.parseInt(settings.getString("height.size.window"));
-            heightWindow = (heightWindow < 250 ? 250 : heightWindow);
-        } catch (NotFoundSettingException | NumberFormatException e) {
-            widthWindow = 450;
-            heightWindow = 300;
-            logger.log(Level.FINE, e.getMessage());
-        }
-        setSize(widthWindow, heightWindow);
-    }
-
-    private void setPositionWindow() {
-        Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
-        int defPositionX = (int) ((dimScreen.getWidth() - getWidth()) / 2);
-        int defPositionY = (int) ((dimScreen.getHeight() - getHeight()) / 2);
-
-        int positionX;
-        int positionY;
-        try {
-            positionX = Integer.parseInt(settings.getString("width.position.window"));
-            positionY = Integer.parseInt(settings.getString("height.position.window"));
-
-            if (positionX > dimScreen.getWidth() || positionY > dimScreen.getHeight()) {
-                throw new NotFoundSettingException("Loaded position of the window exceeds screen size");
-            }
-        } catch (NotFoundSettingException | NumberFormatException e) {
-            positionX = defPositionX;
-            positionY = defPositionY;
-            logger.log(Level.FINE, e.getMessage());
-        }
-
-        setLocation(positionX, positionY);
-    }
-
-    private void runSaveSettingsAndExit() {
-        setVisible(false);
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                settings.setSetting("width.size.window", String.valueOf((int) getSize().getWidth()));
-                settings.setSetting("height.size.window", String.valueOf((int) getSize().getHeight()));
-                settings.setSetting("width.position.window", String.valueOf(getX()));
-                settings.setSetting("height.position.window", String.valueOf(getY()));
-                try {
-                    settings.storeSettings();
-                } catch (IOException e) {
-                    logger.log(Level.CONFIG, e.getMessage());
-                }
-                System.exit(0);
-            }
-        });
-        t.start();
-    }
-
     private void runCheckUpdate() {
         Thread t = new Thread(new Runnable() {
             @Override
@@ -338,7 +239,27 @@ public class MainForm extends JFrame {
         t.start();
     }
 
-    private boolean runProcessBuilder(Operations operations) {
+    private void runSaveSettingsAndExit() {
+        setVisible(false);
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                settings.setSetting("width.size.window", String.valueOf((int) getSize().getWidth()));
+                settings.setSetting("height.size.window", String.valueOf((int) getSize().getHeight()));
+                settings.setSetting("width.position.window", String.valueOf(getX()));
+                settings.setSetting("height.position.window", String.valueOf(getY()));
+                try {
+                    settings.storeSettings();
+                } catch (IOException e) {
+                    logger.log(Level.CONFIG, e.getMessage());
+                }
+                System.exit(0);
+            }
+        });
+        t.start();
+    }
+
+    private boolean runProcess(Operations operations) {
         ArrayList<String> errorList = (ArrayList<String>) Path.checkPath(operations);
         if (!errorList.isEmpty()) {
             StringBuilder sb = new StringBuilder();
@@ -360,5 +281,88 @@ public class MainForm extends JFrame {
             logger.log(Level.FINE, e.getMessage());
             return false;
         }
+    }
+
+    /************************************************
+     *              Event listeners                 *
+     ************************************************/
+
+    private class WindowListener extends WindowAdapter {
+
+        @Override
+        public void windowClosing(WindowEvent event) {
+            runSaveSettingsAndExit();
+        }
+    }
+
+    private class ButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("enterpriseButton")) {
+                if (runProcess(Operations.ENTERPRISE)) {
+                    runSaveSettingsAndExit();
+                }
+            } else if (e.getActionCommand().equals("configButton")) {
+                if (runProcess(Operations.CONFIG)) {
+                    runSaveSettingsAndExit();
+                }
+            } else if (e.getActionCommand().equals("updateButton")) {
+                UpdateBaseForm form = new UpdateBaseForm(MainForm.this);
+                form.setVisible(true);
+                form.runUpdateBase();
+            } else if (e.getActionCommand().equals("checkButton")) {
+                runProcess(Operations.CHECK);
+            } else if (e.getActionCommand().equals("settingButton")) {
+                SettingsForm form = new SettingsForm(MainForm.this);
+                form.setVisible(true);
+            }
+        }
+    }
+
+    private class SelectionListener implements ListSelectionListener {
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            int selected = ((JList) e.getSource()).getSelectedIndex();
+            String name = listModel.getElementAt(selected).toString();
+            labelBase.setText("File=\"" + name + "\";");
+        }
+    }
+
+    private class UpdateAction extends AbstractAction {
+
+        UpdateAction() {
+            putValue(NAME, Resource.getString("CheckUpdateButton"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            new UpdateProgramForm(MainForm.this);
+        }
+    }
+
+    private class ExitAction extends AbstractAction {
+
+        ExitAction() {
+            putValue(NAME, Resource.getString("ExitButton"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            runSaveSettingsAndExit();
+        }
+    }
+
+    /**
+     * Adds a button to a container.
+     *
+     * @param c        the container
+     * @param title    the button title
+     * @param listener the action listener for the button
+     */
+    public void addButton(Container c, String title, ActionListener listener) {
+        JButton button = new JButton(title);
+        c.add(button);
+        button.addActionListener(listener);
     }
 }
