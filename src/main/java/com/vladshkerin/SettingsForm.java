@@ -55,58 +55,6 @@ public class SettingsForm extends JDialog {
         add(createGUI());
     }
 
-    public class ButtonListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getActionCommand().equals("saveButton")) {
-                saveSettings();
-            } else if (e.getActionCommand().equals("closeButton")) {
-                dispose();
-            } else if (e.getActionCommand().equals("choicePath1cButton")) {
-                int res = fileChooser.showOpenDialog(SettingsForm.this);
-                if (res == JFileChooser.APPROVE_OPTION) {
-                    path1cText.setText(fileChooser.getSelectedFile().getAbsolutePath());
-                }
-            } else if (e.getActionCommand().equals("choiceBaseButton")) {
-                int res = fileChooser.showOpenDialog(SettingsForm.this);
-                if (res == JFileChooser.APPROVE_OPTION) {
-                    pathBaseText.setText(fileChooser.getSelectedFile().getAbsolutePath());
-                }
-            } else if (e.getActionCommand().equals("choiceBackupButton")) {
-                int res = fileChooser.showOpenDialog(SettingsForm.this);
-                if (res == JFileChooser.APPROVE_OPTION) {
-                    pathBackupText.setText(fileChooser.getSelectedFile().getAbsolutePath());
-                }
-            } else if (e.getActionCommand().equals("saveSettingsRegisterButton")) {
-                if (settings instanceof Property) {
-                    settings = Preference.getInstance();
-                }
-            } else if (e.getActionCommand().equals("saveSettingsFileButton")) {
-                if (settings instanceof Preference) {
-                    settings = Property.getInstance();
-                }
-            }
-        }
-    }
-
-    private void saveSettings() {
-        if (!path1cText.getText().isEmpty()) {
-            settings.setSetting("path.1c", path1cText.getText());
-        }
-        if (!pathBaseText.getText().isEmpty()) {
-            settings.setSetting("path.base", pathBaseText.getText());
-        }
-        if (!pathBackupText.getText().isEmpty()) {
-            settings.setSetting("path.backup", pathBackupText.getText());
-        }
-        try {
-            settings.storeSettings();
-        } catch (IOException e) {
-            logger.log(Level.CONFIG, e.getMessage());
-        }
-    }
-
     private void setPositionWindow() {
         Dimension dimScreen = Toolkit.getDefaultToolkit().getScreenSize();
         int positionX = (int) ((dimScreen.getWidth() - WIDTH_WINDOW) / 2);
@@ -205,5 +153,61 @@ public class SettingsForm extends JDialog {
         pMain.add(pButton);
 
         return pMain;
+    }
+
+    private void saveSettings() {
+        if (!path1cText.getText().isEmpty()) {
+            settings.setSetting("path.1c", path1cText.getText());
+        }
+        if (!pathBaseText.getText().isEmpty()) {
+            settings.setSetting("path.base", pathBaseText.getText());
+        }
+        if (!pathBackupText.getText().isEmpty()) {
+            settings.setSetting("path.backup", pathBackupText.getText());
+        }
+        try {
+            settings.storeSettings();
+        } catch (IOException e) {
+            logger.log(Level.CONFIG, e.getMessage());
+        }
+    }
+
+    /************************************************
+     *              Event listeners                 *
+     ************************************************/
+
+    public class ButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getActionCommand().equals("saveButton")) {
+                saveSettings();
+            } else if (e.getActionCommand().equals("closeButton")) {
+                dispose();
+            } else if (e.getActionCommand().equals("choicePath1cButton")) {
+                int res = fileChooser.showOpenDialog(SettingsForm.this);
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    path1cText.setText(fileChooser.getSelectedFile().getAbsolutePath());
+                }
+            } else if (e.getActionCommand().equals("choiceBaseButton")) {
+                int res = fileChooser.showOpenDialog(SettingsForm.this);
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    pathBaseText.setText(fileChooser.getSelectedFile().getAbsolutePath());
+                }
+            } else if (e.getActionCommand().equals("choiceBackupButton")) {
+                int res = fileChooser.showOpenDialog(SettingsForm.this);
+                if (res == JFileChooser.APPROVE_OPTION) {
+                    pathBackupText.setText(fileChooser.getSelectedFile().getAbsolutePath());
+                }
+            } else if (e.getActionCommand().equals("saveSettingsRegisterButton")) {
+                if (settings instanceof Property) {
+                    settings = Preference.getInstance();
+                }
+            } else if (e.getActionCommand().equals("saveSettingsFileButton")) {
+                if (settings instanceof Preference) {
+                    settings = Property.getInstance();
+                }
+            }
+        }
     }
 }
