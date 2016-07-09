@@ -1,4 +1,4 @@
-package com.vladshkerin;
+package ru.vladimirshkerin.models;
 
 import javax.swing.*;
 import java.awt.*;
