@@ -14,13 +14,16 @@ import java.util.logging.Logger;
 
 /**
  * The class for consistent running of list of processes.
+ *
+ * @author Vladimir Shkerin
+ * @since 24.01.2016
  */
 public class TaskPool implements Runnable {
 
-    private final Object object = new Object();
-
-    private static final Logger logger = Logger.getLogger("com.vladshkerin.launcher1c");
+    private static final Logger log = Logger.getLogger("com.vladshkerin.launcher1c");
     private static Settings settings = Property.getInstance();
+
+    private final Object object = new Object();
 
     private Operations[] poolOperations;
     private JTextArea textArea;
@@ -67,11 +70,11 @@ public class TaskPool implements Runnable {
                                 new SimpleDateFormat("dd.MM.yyyy").format(System.currentTimeMillis()));
                         settings.storeSettings();
                     } catch (IOException e) {
-                        logger.log(Level.FINE, e.getMessage());
+                        log.log(Level.FINE, e.getMessage());
                     }
                 }
             } catch (InterruptedException e) {
-                logger.log(Level.FINE, "interrupted pool operations.");
+                log.log(Level.FINE, "interrupted pool operations.");
                 break;
             }
         }
@@ -87,7 +90,6 @@ public class TaskPool implements Runnable {
                 message,
                 Resource.getString("WarningForm"),
                 JOptionPane.DEFAULT_OPTION);
-
     }
 
     private Operations[] createPool() {
@@ -102,7 +104,7 @@ public class TaskPool implements Runnable {
             lastCalendar.add(Calendar.DAY_OF_YEAR, 7);
         } catch (NotFoundSettingException | ParseException e) {
             lastCalendar = currentCalendar;
-            logger.log(Level.FINE, e.getMessage());
+            log.log(Level.FINE, e.getMessage());
         }
 
         if (lastCalendar.compareTo(currentCalendar) <= 0) {
@@ -147,7 +149,7 @@ public class TaskPool implements Runnable {
                         e.getMessage(),
                         Resource.getString("ErrorForm"),
                         JOptionPane.ERROR_MESSAGE);
-                logger.log(Level.FINE, e.getMessage());
+                log.log(Level.FINE, e.getMessage());
             }
 
             return null;
@@ -156,7 +158,8 @@ public class TaskPool implements Runnable {
         @Override
         protected void process(java.util.List<Void> chunks) {
             String date = new SimpleDateFormat("kk:mm:ss").format(System.currentTimeMillis());
-            textArea.append(date + " - " +
+            textArea.append(date +
+                    " - " +
                     Resource.getString("str" + operation.toString() + "Operation") +
                     "\n");
         }
