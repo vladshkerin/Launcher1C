@@ -3,4 +3,6 @@ out/
 .idea/
 *.log
 *.ini
+*.iml
 doc/
+src/test/
