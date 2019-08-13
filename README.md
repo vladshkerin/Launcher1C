@@ -1,2 +1,2 @@
 # Launcher 1C
-The program run and update the software 1C
+Программа запуска и обновления 1C
